@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Colección de Realidad Aumentada</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Colección RA">
+    <meta name="theme-color" content="#00BCD4">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #00BCD4;
+            text-align: center;
+            font-size: 2em;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .tarjeta {
+            background: rgba(255,255,255,0.08);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #00BCD4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tarjeta:hover {
+            transform: translateY(-5px);
+            background: rgba(0,188,212,0.15);
+        }
+        .tarjeta h2 {
+            margin-top: 0;
+            color: #FFD700;
+        }
+        .badge {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 MI COLECCIÓN DE RA</h1>
+    <div class="grid">
+        <div class="tarjeta" onclick="window.location.href='arquitecto-vistas/index.html'">
+            <h2>🏛️ Arquitecto de Vistas</h2>
+            <p>Aprende vistas frontal, superior y conexión 2D-3D. Marcador: HIRO</p>
+            <span class="badge">✅ Funciona offline</span>
+        </div>
+    </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+</body>
+</html>

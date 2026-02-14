@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Arquitecto de Vistas</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { 
+            width: 100vw; 
+            height: 100vh; 
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        #conceptual, #conceptualizacion, #resultados {
+            position: fixed; 
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: white;
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            text-align: center; 
+            padding: 20px;
+            z-index: 1000;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+        }
+        
+        #conceptualizacion {
+            display: none;
+            padding: 30px 20px;
+            justify-content: flex-start;
+        }
+        
+        #resultados { 
+            display: none; 
+            padding: 40px 20px;
+            justify-content: flex-start;
+            padding-top: 60px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #007AFF, #00BCD4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 90%;
+            max-width: 300px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+        
+        #barra-superior {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.95) 0%, rgba(26,26,46,0.95) 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 900;
+            border-bottom: 2px solid #00BCD4;
+        }
+        
+        #panel-ia {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.95);
+            color: white;
+            padding: 20px;
+            z-index: 900;
+            text-align: center;
+            max-height: 40vh;
+            overflow-y: auto;
+            border-top: 2px solid #00BCD4;
+        }
+        
+        .opcion-btn {
+            background: linear-gradient(45deg, #00BCD4, #0097A7);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 350px;
+            margin: 8px 0;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3);
+        }
+        
+        .opcion-btn:hover {
+            background: linear-gradient(45deg, #0097A7, #00838F);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 188, 212, 0.4);
+        }
+        
+        .opcion-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #indicador-ar {
+            position: fixed;
+            top: 70px; 
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, rgba(0, 122, 255, 0.95), rgba(0, 188, 212, 0.95));
+            color: white;
+            padding: 12px 25px;
+            border-radius: 15px;
+            z-index: 800;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        #escena-ar, #escena-vr {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .oculto { display: none !important; }
+        
+        .mensaje-exito {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .mensaje-error {
+            color: #FF5252;
+            font-weight: bold;
+        }
+        
+        /* BOTÓN VR */
+        .vr-gafas-btn {
+            position: fixed !important;
+            top: 80px !important;
+            right: 20px !important;
+            background: linear-gradient(45deg, #FF9800, #F57C00) !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 20px !important;
+            border-radius: 50px !important;
+            cursor: pointer !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            font-weight: bold !important;
+            font-size: 14px !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3) !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .vr-gafas-btn:hover {
+            background: linear-gradient(45deg, #F57C00, #EF6C00) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4) !important;
+        }
+        
+        /* CONTENEDOR DE RESULTADOS */
+        .resultados-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+        
+        .recomendaciones {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px auto;
+            max-width: 700px;
+            text-align: left;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .recomendacion-item {
+            margin: 12px 0;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .recomendacion-item:before {
+            content: "▸";
+            color: #00BCD4;
+            font-size: 18px;
+            position: absolute;
+            left: 0;
+        }
+        
+        .botones-final {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .puntaje-final {
+            font-size: 80px;
+            margin: 20px;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            font-weight: bold;
+        }
+        
+        /* ESTILOS PARA CONCEPTUALIZACIÓN - MEJORADA */
+        .contenido-conceptual {
+            max-width: 900px;
+            width: 100%;
+            text-align: left;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .concepto-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #00BCD4;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .concepto-imagen-container {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            margin: 15px auto;
+            border-radius: 15px;
+            border: 3px solid #00BCD4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .diagrama {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .concepto-titulo {
+            color: #00BCD4;
+            font-size: 26px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .concepto-lista {
+            margin-left: 25px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .concepto-lista li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- PANTALLA INICIAL -->
+    <div id="conceptual">
+        <h1 style="color: #00BCD4; margin-bottom: 20px; font-size: 3em;">ARQUITECTO DE VISTAS</h1>
+        <div style="color: #B0BEC5; margin-bottom: 30px; font-size: 18px; max-width: 600px;">
+            Aprende a visualizar objetos en 2D y 3D a través de Realidad Aumentada y Virtual
+        </div>
+        <div style="text-align: left; max-width: 500px; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;">
+            <p><strong style="color: #00BCD4;">Conceptos que aprenderás:</strong></p>
+            <p>1. Vista frontal en Realidad Aumentada</p>
+            <p>2. Vista superior en Realidad Virtual</p>
+            <p>3. Conexión entre vistas 2D y 3D</p>
+        </div>
+        <button class="btn" onclick="mostrarConceptualizacion()">📚 ESTUDIAR CONCEPTOS</button>
+        <button class="btn" onclick="comenzarActividad()">🚀 COMENZAR PRÁCTICA</button>
+    </div>
+
+    <!-- PANTALLA CONCEPTUALIZACIÓN -->
+    <div id="conceptualizacion">
+        <h1 style="color: #00BCD4; margin-bottom: 20px;">📚 CONCEPTUALIZACIÓN</h1>
+        
+        <div class="contenido-conceptual">
+            <!-- Concepto 1: Vista Frontal -->
+            <div class="concepto-card">
+                <h2 class="concepto-titulo">🎯 1. Vista Frontal</h2>
+                <p>La <strong style="color: #00BCD4;">vista frontal</strong> es la representación de un objeto como se ve desde el frente, mostrando su altura y anchura pero sin profundidad.</p>
+                
+                <div class="concepto-imagen-container">
+                    <div class="diagrama" style="background: linear-gradient(45deg, #2C3E50, #34495E);">
+                        <div style="width: 120px; height: 160px; background: linear-gradient(45deg, #8B4513, #A0522D); border: 3px solid #00BCD4; position: relative;">
+                            <div style="position: absolute; width: 110px; height: 150px; background: #87CEEB; opacity: 0.7; top: 5px; left: 5px;"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold;">FRONTAL</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; font-style: italic; color: #B0BEC5;">Representación de una ventana en vista frontal</p>
+                
+                <h3 style="color: #00BCD4; margin-top: 20px;">Características principales:</h3>
+                <ul class="concepto-lista">
+                    <li>Se obtiene mirando el objeto de frente</li>
+                    <li>Muestra las dimensiones verticales y horizontales</li>
+                    <li>No muestra la profundidad</li>
+                    <li>Es la vista más común en planos arquitectónicos</li>
+                    <li>Representa cómo verías el objeto si estuvieras parado frente a él</li>
+                </ul>
+            </div>
+            
+            <!-- Concepto 2: Vista Superior -->
+            <div class="concepto-card">
+                <h2 class="concepto-titulo">🛸 2. Vista Superior</h2>
+                <p>La <strong style="color: #00BCD4;">vista superior</strong> (también llamada vista en planta) muestra el objeto desde arriba, como si lo miráramos desde un avión.</p>
+                
+                <div class="concepto-imagen-container">
+                    <div class="diagrama" style="background: linear-gradient(45deg, #1565C0, #1976D2);">
+                        <div style="width: 150px; height: 100px; background: #2196F3; position: relative; border: 2px solid #FFD700;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold;">PLANTA</div>
+                            <div style="position: absolute; width: 60px; height: 30px; background: rgba(255, 255, 255, 0.8); top: 35px; left: 45px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; font-style: italic; color: #B0BEC5;">Representación de una planta arquitectónica</p>
+                
+                <h3 style="color: #00BCD4; margin-top: 20px;">¿Cómo obtenerla?</h3>
+                <ul class="concepto-lista">
+                    <li>Debes <strong>trasladarte</strong> hasta quedar sobre el objeto</li>
+                    <li>NO se obtiene rotando el objeto</li>
+                    <li>Muestra la relación espacial entre componentes</li>
+                    <li>Esencial para planos de distribución</li>
+                    <li>Te permite ver la "huella" del objeto en el espacio</li>
+                </ul>
+            </div>
+            
+            <!-- Concepto 3: Conexión 2D-3D -->
+            <div class="concepto-card">
+                <h2 class="concepto-titulo">🔗 3. Conexión entre Vistas 2D y 3D</h2>
+                <p>Las vistas 2D (como planos) son <strong style="color: #00BCD4;">proyecciones</strong> de objetos 3D desde diferentes posiciones.</p>
+                
+                <div class="concepto-imagen-container">
+                    <div class="diagrama" style="background: linear-gradient(45deg, #1A237E, #283593);">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <!-- Objeto 3D -->
+                            <div style="width: 80px; height: 80px; background: linear-gradient(45deg, #4CAF50, #388E3C); transform: perspective(300px) rotateX(20deg) rotateY(20deg); position: relative;">
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 12px;">3D</div>
+                            </div>
+                            <!-- Flecha -->
+                            <div style="color: #FFD700; font-size: 24px;">→</div>
+                            <!-- Vista 2D -->
+                            <div style="width: 100px; height: 60px; background: linear-gradient(45deg, #FF9800, #F57C00); position: relative;">
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 12px;">2D</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; font-style: italic; color: #B0BEC5;">Transformación de objeto 3D a vista 2D</p>
+                
+                <h3 style="color: #00BCD4; margin-top: 20px;">Relaciones importantes:</h3>
+                <ul class="concepto-lista">
+                    <li>La <strong>vista frontal 2D</strong> se obtiene desde posición frontal en 3D</li>
+                    <li>La <strong>vista superior 2D</strong> se obtiene desde posición superior en 3D</li>
+                    <li>La <strong>vista lateral 2D</strong> se obtiene desde posición lateral en 3D</li>
+                    <li>Cada vista muestra información diferente del mismo objeto</li>
+                    <li>Combinando varias vistas 2D puedes reconstruir mentalmente el objeto 3D</li>
+                </ul>
+            </div>
+            
+            <!-- Ejercicio de práctica mental -->
+            <div class="concepto-card" style="background: linear-gradient(135deg, rgba(0, 188, 212, 0.15), rgba(0, 122, 255, 0.15)); border-left: 5px solid #FFD700;">
+                <h2 style="color: #FFD700; text-align: center;">🧠 ¿Listo para practicar?</h2>
+                <p>Ahora aplicarás estos conceptos en una actividad interactiva:</p>
+                <ol class="concepto-lista">
+                    <li><strong>Fase 1:</strong> Usarás Realidad Aumentada para ver la vista frontal</li>
+                    <li><strong>Fase 2:</strong> Explorarás en Realidad Virtual para encontrar la vista superior</li>
+                    <li><strong>Fase 3:</strong> Conectarás las vistas 2D con posiciones 3D</li>
+                </ol>
+                <p><strong>Recuerda:</strong> No se trata de memorizar, sino de entender cómo se relacionan las diferentes representaciones de un objeto.</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; margin-bottom: 30px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn" onclick="volverInicio()">🏠 VOLVER AL INICIO</button>
+            <button class="btn" onclick="comenzarActividad()">🚀 COMENZAR PRÁCTICA</button>
+        </div>
+    </div>
+
+    <!-- BARRA SUPERIOR -->
+    <div id="barra-superior" class="oculto">
+        <div id="fase-actual" style="font-size: 18px; font-weight: bold;">Fase 1: Vista Frontal</div>
+        <div id="puntaje" style="font-size: 18px; font-weight: bold;">Puntos: <span style="color: #FFD700;">0</span></div>
+    </div>
+
+    <!-- INDICADOR -->
+    <div id="indicador-ar" class="oculto">📱 Escanea el marcador HIRO</div>
+
+    <!-- ESCENAS -->
+    <div id="escena-ar" class="oculto"></div>
+    <div id="escena-vr" class="oculto"></div>
+
+    <!-- PANEL IA -->
+    <div id="panel-ia" class="oculto">
+        <div id="mensaje-ia">Preparando actividad...</div>
+        <div id="contenedor-opciones" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="resultados">
+        <div class="resultados-container">
+            <h1 style="color: #00BCD4; margin-bottom: 10px; font-size: 2.5em;">🎉 ACTIVIDAD COMPLETADA</h1>
+            <div style="color: #B0BEC5; margin-bottom: 30px; font-size: 18px;">
+                ¡Excelente trabajo! Revisa tus resultados y recomendaciones
+            </div>
+            
+            <div class="puntaje-final" id="puntaje-final">0</div>
+            <h3 style="margin-bottom: 30px; color: #B0BEC5;">PUNTUACIÓN FINAL</h3>
+            
+            <div class="recomendaciones" id="recomendaciones-container">
+                <!-- Las recomendaciones se generarán dinámicamente aquí -->
+            </div>
+            
+            <div class="botones-final">
+                <button class="btn" onclick="reiniciar()">🔄 REPETIR ACTIVIDAD</button>
+                <button class="btn" onclick="volverInicio()">🏠 VOLVER AL INICIO</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // BASE DE DATOS DE OBJETOS ARQUITECTÓNICOS
+        // ============================================
+        const objetosArquitectonicos = [
+            {
+                id: 1,
+                nombre: "Ventana Arqueada",
+                descripcion: "Ventana con arco superior y detalles ornamentales",
+                tipo: "ventana",
+                colorMarco: "#8B4513",
+                colorVidrio: "#87CEEB",
+                colorDetalles: "#DAA520",
+                ancho: 1.8,
+                alto: 2.2,
+                profundidad: 0.15,
+                textura: "madera",
+                plantaHTML: `
+                    <div style="width: 90px; height: 40px; position: relative;">
+                        <div style="width: 100%; height: 100%; border: 3px solid #8B4513; background: rgba(255, 255, 255, 0.9); border-radius: 5px;">
+                            <div style="width: 84px; height: 34px; background: linear-gradient(135deg, rgba(135, 206, 235, 0.6), rgba(173, 216, 230, 0.8)); margin: 3px; border-radius: 2px;"></div>
+                            <div style="position: absolute; width: 86px; height: 2px; background: #654321; top: 50%; left: 2px;"></div>
+                            <div style="position: absolute; width: 2px; height: 36px; background: #654321; left: 50%; top: 2px;"></div>
+                        </div>
+                        <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 20px; height: 8px; background: #8B4513; border-radius: 10px 10px 0 0;"></div>
+                    </div>
+                `,
+                plantaDescripcion: "Rectángulo con arco superior y divisiones cruciformes"
+            },
+            {
+                id: 2,
+                nombre: "Puerta Principal",
+                descripcion: "Puerta de entrada con detalles tallados y manija ornamental",
+                tipo: "puerta",
+                colorMadera: "#654321",
+                colorMetal: "#C0C0C0",
+                colorDetalles: "#8B7355",
+                ancho: 1.2,
+                alto: 2.4,
+                profundidad: 0.1,
+                textura: "madera_tallada",
+                plantaHTML: `
+                    <div style="width: 60px; height: 100px; position: relative;">
+                        <div style="width: 100%; height: 100%; background: linear-gradient(to right, #654321, #8B4513); border: 2px solid #5D4037; border-radius: 3px;">
+                            <div style="width: 50px; height: 20px; background: rgba(139, 115, 85, 0.3); border: 1px solid #8B7355; position: absolute; top: 15px; left: 5px;"></div>
+                            <div style="width: 50px; height: 20px; background: rgba(139, 115, 85, 0.3); border: 1px solid #8B7355; position: absolute; top: 40px; left: 5px;"></div>
+                            <div style="width: 50px; height: 20px; background: rgba(139, 115, 85, 0.3); border: 1px solid #8B7355; position: absolute; top: 65px; left: 5px;"></div>
+                            <div style="width: 6px; height: 6px; background: radial-gradient(circle, #C0C0C0, #808080); border-radius: 50%; position: absolute; top: 50px; right: 8px; box-shadow: 0 0 3px rgba(192, 192, 192, 0.8);"></div>
+                        </div>
+                        <div style="position: absolute; width: 70px; height: 110px; border: 2px solid #5D4037; top: -5px; left: -5px; z-index: -1;"></div>
+                    </div>
+                `,
+                plantaDescripcion: "Rectángulo vertical con paneles y marco, círculo para manija"
+            },
+            {
+                id: 3,
+                nombre: "Columna Corintia",
+                descripcion: "Columna clásica con capitel ornamentado y base detallada",
+                tipo: "columna",
+                colorMarmol: "#E8E8E8",
+                colorDetalles: "#D3D3D3",
+                colorBase: "#A9A9A9",
+                ancho: 0.9,
+                alto: 3.0,
+                profundidad: 0.9,
+                textura: "marmol",
+                plantaHTML: `
+                    <div style="width: 45px; height: 45px; position: relative;">
+                        <div style="width: 100%; height: 100%; background: radial-gradient(circle, #E8E8E8, #D3D3D3); border-radius: 50%; border: 2px solid #A9A9A9;">
+                            <div style="width: 80%; height: 80%; background: transparent; border: 1px solid #A9A9A9; border-radius: 50%; position: absolute; top: 10%; left: 10%;"></div>
+                            <div style="width: 60%; height: 60%; background: transparent; border: 1px dashed #A9A9A9; border-radius: 50%; position: absolute; top: 20%; left: 20%;"></div>
+                        </div>
+                        <div style="width: 55px; height: 55px; background: rgba(169, 169, 169, 0.3); position: absolute; top: -5px; left: -5px; z-index: -1; border: 1px solid #808080;"></div>
+                    </div>
+                `,
+                plantaDescripcion: "Círculo concéntrico dentro de cuadrado, representación de columna"
+            },
+            {
+                id: 4,
+                nombre: "Escalera Caracol",
+                descripcion: "Escalera en espiral con baranda de metal y peldaños de madera",
+                tipo: "escalera",
+                colorMadera: "#DEB887",
+                colorMetal: "#708090",
+                colorPeldanos: "#D2B48C",
+                ancho: 2.5,
+                alto: 2.8,
+                profundidad: 2.5,
+                textura: "madera_metal",
+                plantaHTML: `
+                    <div style="width: 125px; height: 125px; position: relative;">
+                        <div style="width: 100%; height: 100%; border: 2px solid #708090; border-radius: 50%; background: rgba(112, 128, 144, 0.1);">
+                            <div style="width: 80%; height: 80%; border: 2px solid #DEB887; border-radius: 50%; position: absolute; top: 10%; left: 10%; border-top-color: transparent; border-right-color: transparent;"></div>
+                            <div style="width: 60%; height: 60%; border: 2px solid #D2B48C; border-radius: 50%; position: absolute; top: 20%; left: 20%; border-top-color: transparent; border-right-color: transparent;"></div>
+                            <div style="width: 40%; height: 40%; border: 2px solid #8B7355; border-radius: 50%; position: absolute; top: 30%; left: 30%; border-top-color: transparent; border-right-color: transparent;"></div>
+                            <div style="width: 20%; height: 20%; background: #708090; border-radius: 50%; position: absolute; top: 40%; left: 40%;"></div>
+                            <div style="position: absolute; width: 10px; height: 3px; background: #D2B48C; top: 20%; left: 50%; transform: translateX(-50%);"></div>
+                            <div style="position: absolute; width: 10px; height: 3px; background: #D2B48C; top: 50%; right: 20%;"></div>
+                            <div style="position: absolute; width: 10px; height: 3px; background: #D2B48C; bottom: 20%; left: 50%; transform: translateX(-50%);"></div>
+                        </div>
+                    </div>
+                `,
+                plantaDescripcion: "Espiral concéntrica representando escalera caracol"
+            },
+            {
+                id: 5,
+                nombre: "Arco Triunfal",
+                descripcion: "Estructura monumental con arco central y columnas laterales",
+                tipo: "arco",
+                colorPiedra: "#B8B8B8",
+                colorDetalles: "#808080",
+                colorRelieve: "#989898",
+                ancho: 3.0,
+                alto: 4.0,
+                profundidad: 1.5,
+                textura: "piedra_tallada",
+                plantaHTML: `
+                    <div style="width: 150px; height: 75px; position: relative;">
+                        <div style="width: 100%; height: 100%; background: linear-gradient(to bottom, #B8B8B8, #989898); border: 2px solid #808080; border-radius: 5px;">
+                            <div style="width: 20px; height: 60px; background: #989898; border: 2px solid #808080; position: absolute; top: 7.5px; left: 20px;"></div>
+                            <div style="width: 20px; height: 60px; background: #989898; border: 2px solid #808080; position: absolute; top: 7.5px; right: 20px;"></div>
+                            <div style="width: 70px; height: 40px; border: 3px solid #808080; border-top: none; border-radius: 0 0 35px 35px; position: absolute; top: 0; left: 40px;"></div>
+                            <div style="width: 30px; height: 50px; border: 2px solid #989898; position: absolute; top: 12.5px; left: 50px; background: rgba(128, 128, 128, 0.2);"></div>
+                            <div style="width: 30px; height: 50px; border: 2px solid #989898; position: absolute; top: 12.5px; right: 50px; background: rgba(128, 128, 128, 0.2);"></div>
+                        </div>
+                    </div>
+                `,
+                plantaDescripcion: "Estructura con columnas, arco central y vanos laterales"
+            }
+        ];
+
+        // Variables para rastrear objetos seleccionados por fase
+        let objetoFase1 = null;
+        let objetoFase2 = null;
+        let objetoFase3 = null;
+
+        // ============================================
+        // FUNCIONES PARA MANEJO DE OBJETOS
+        // ============================================
+        
+        function seleccionarObjetoAleatorio() {
+            const indice = Math.floor(Math.random() * objetosArquitectonicos.length);
+            return objetosArquitectonicos[indice];
+        }
+
+        function obtenerHTML3DParaObjeto(objeto) {
+            let html = '';
+            
+            switch(objeto.tipo) {
+                case 'ventana':
+                    html = `
+                        <a-box position="0 ${objeto.alto/2} 0" 
+                               width="${objeto.ancho}" 
+                               height="${objeto.alto}" 
+                               depth="${objeto.profundidad}" 
+                               color="${objeto.colorMarco}"
+                               roughness="0.7"
+                               metalness="0.3">
+                            <a-box position="0 0 0.06" 
+                                   width="${objeto.ancho * 0.9}" 
+                                   height="${objeto.alto * 0.9}" 
+                                   depth="0.05" 
+                                   color="${objeto.colorVidrio}" 
+                                   opacity="0.7"
+                                   roughness="0.1"
+                                   metalness="0.9"></a-box>
+                            <a-box position="${objeto.ancho * -0.225} 0 0.07" 
+                                   width="0.05" 
+                                   height="${objeto.alto * 0.9}" 
+                                   depth="0.04" 
+                                   color="${objeto.colorDetalles}"
+                                   roughness="0.6"></a-box>
+                            <a-box position="${objeto.ancho * 0.225} 0 0.07" 
+                                   width="0.05" 
+                                   height="${objeto.alto * 0.9}" 
+                                   depth="0.04" 
+                                   color="${objeto.colorDetalles}"
+                                   roughness="0.6"></a-box>
+                            <a-cylinder position="0 ${objeto.alto * 0.45} 0.07" 
+                                       height="0.04" 
+                                       radius="${objeto.ancho * 0.125}" 
+                                       color="${objeto.colorDetalles}"
+                                       rotation="90 0 0"
+                                       open-ended="true"
+                                       theta-length="180"
+                                       roughness="0.6"></a-cylinder>
+                            <a-box position="0 ${objeto.alto * -0.45} 0.07" 
+                                   width="${objeto.ancho * 0.9}" 
+                                   height="0.1" 
+                                   depth="0.04" 
+                                   color="${objeto.colorMarco}"
+                                   roughness="0.8"></a-box>
+                        </a-box>
+                        <a-box position="0 ${objeto.alto * -0.55} 0.1" 
+                               width="${objeto.ancho * 1.2}" 
+                               height="0.05" 
+                               depth="0.15" 
+                               color="#5D4037"
+                               roughness="0.9"></a-box>
+                    `;
+                    break;
+                    
+                case 'puerta':
+                    html = `
+                        <a-box position="0 ${objeto.alto/2} 0" 
+                               width="${objeto.ancho}" 
+                               height="${objeto.alto}" 
+                               depth="${objeto.profundidad}" 
+                               color="${objeto.colorMadera}"
+                               roughness="0.8"
+                               metalness="0.2">
+                            <a-box position="0 ${objeto.alto * 0.3} 0.06" 
+                                   width="${objeto.ancho * 0.8}" 
+                                   height="${objeto.alto * 0.25}" 
+                                   depth="0.04" 
+                                   color="${objeto.colorDetalles}"
+                                   roughness="0.9"></a-box>
+                            <a-box position="0 ${objeto.alto * -0.1} 0.06" 
+                                   width="${objeto.ancho * 0.8}" 
+                                   height="${objeto.alto * 0.25}" 
+                                   depth="0.04" 
+                                   color="${objeto.colorDetalles}"
+                                   roughness="0.9"></a-box>
+                            <a-cylinder position="${objeto.ancho * 0.35} 0 0.08" 
+                                       radius="0.04" 
+                                       height="0.02" 
+                                       color="${objeto.colorMetal}"
+                                       metalness="0.9"
+                                       roughness="0.2"></a-cylinder>
+                            <a-torus position="${objeto.ancho * 0.4} 0 0.08" 
+                                    radius="0.03" 
+                                    radius-tubular="0.008" 
+                                    color="${objeto.colorMetal}"
+                                    metalness="0.9"
+                                    arc="180"
+                                    rotation="0 90 0"></a-torus>
+                        </a-box>
+                        <a-box position="0 ${objeto.alto/2} ${objeto.profundidad * -0.6}" 
+                               width="${objeto.ancho * 1.1}" 
+                               height="${objeto.alto * 1.05}" 
+                               depth="0.08" 
+                               color="#5D4037"
+                               roughness="0.9"></a-box>
+                        <a-box position="0 ${objeto.alto + 0.1} 0" 
+                               width="${objeto.ancho * 1.2}" 
+                               height="0.15" 
+                               depth="0.2" 
+                               color="#5D4037"
+                               roughness="0.9"></a-box>
+                    `;
+                    break;
+                    
+                case 'columna':
+                    html = `
+                        <a-cylinder position="0 0.2 0" 
+                                   radius="${objeto.ancho * 0.6}" 
+                                   height="0.4" 
+                                   color="${objeto.colorBase}"
+                                   roughness="0.7"
+                                   segments-radial="16"></a-cylinder>
+                        <a-cylinder position="0 ${objeto.alto * 0.5} 0" 
+                                   radius="${objeto.ancho * 0.35}" 
+                                   height="${objeto.alto * 0.8}" 
+                                   color="${objeto.colorMarmol}"
+                                   roughness="0.5"
+                                   metalness="0.3"
+                                   segments-radial="20">
+                            <a-entity position="0 0 0" rotation="0 0 0">
+                                ${generarEstriasColumna(objeto)}
+                            </a-entity>
+                        </a-cylinder>
+                        <a-entity position="0 ${objeto.alto * 0.9} 0">
+                            <a-cylinder position="0 0.2 0" 
+                                       radius="${objeto.ancho * 0.45}" 
+                                       height="0.4" 
+                                       color="${objeto.colorDetalles}"
+                                       roughness="0.6"
+                                       segments-radial="24"></a-cylinder>
+                            <a-cone position="0 0.4 0" 
+                                   radius-bottom="${objeto.ancho * 0.4}" 
+                                   radius-top="${objeto.ancho * 0.3}" 
+                                   height="0.3" 
+                                   color="${objeto.colorDetalles}"
+                                   roughness="0.7"
+                                   segments-radial="8"></a-cone>
+                            <a-torus position="${objeto.ancho * 0.25} 0.5 ${objeto.ancho * 0.25}" 
+                                    radius="0.15" 
+                                    radius-tubular="0.03" 
+                                    color="${objeto.colorMarmol}"
+                                    rotation="0 45 0"></a-torus>
+                            <a-torus position="${objeto.ancho * -0.25} 0.5 ${objeto.ancho * 0.25}" 
+                                    radius="0.15" 
+                                    radius-tubular="0.03" 
+                                    color="${objeto.colorMarmol}"
+                                    rotation="0 -45 0"></a-torus>
+                        </a-entity>
+                    `;
+                    break;
+                    
+                case 'escalera':
+                    html = `
+                        <a-entity position="0 ${objeto.alto/2} 0">
+                            <a-cylinder position="0 ${-objeto.alto/2 + 0.1} 0" 
+                                       radius="${objeto.ancho/2}" 
+                                       height="0.2" 
+                                       color="#5D4037"
+                                       roughness="0.9"></a-cylinder>
+                            <a-cylinder position="0 ${objeto.alto * 0.1} 0" 
+                                       radius="0.1" 
+                                       height="${objeto.alto}" 
+                                       color="${objeto.colorMetal}"
+                                       metalness="0.8"
+                                       roughness="0.3"></a-cylinder>
+                            ${generarPeldañosEspiral(objeto)}
+                            <a-torus position="0 ${objeto.alto * 0.5} 0" 
+                                    radius="${objeto.ancho/2 - 0.1}" 
+                                    radius-tubular="0.02" 
+                                    color="${objeto.colorMetal}"
+                                    metalness="0.8"
+                                    arc="360"
+                                    segments-radial="64"
+                                    segments-tubular="12"></a-torus>
+                            ${generarBarrotesBaranda(objeto)}
+                        </a-entity>
+                    `;
+                    break;
+                    
+                case 'arco':
+                    html = `
+                        <a-box position="0 ${objeto.alto * 0.1} 0" 
+                               width="${objeto.ancho}" 
+                               height="0.2" 
+                               depth="${objeto.profundidad}" 
+                               color="${objeto.colorPiedra}"
+                               roughness="0.8"></a-box>
+                        <a-cylinder position="${objeto.ancho * -0.35} ${objeto.alto * 0.6} 0" 
+                                   radius="0.2" 
+                                   height="${objeto.alto * 0.8}" 
+                                   color="${objeto.colorPiedra}"
+                                   roughness="0.7"
+                                   segments-radial="16"></a-cylinder>
+                        <a-cylinder position="${objeto.ancho * 0.35} ${objeto.alto * 0.6} 0" 
+                                   radius="0.2" 
+                                   height="${objeto.alto * 0.8}" 
+                                   color="${objeto.colorPiedra}"
+                                   roughness="0.7"
+                                   segments-radial="16"></a-cylinder>
+                        <a-torus position="0 ${objeto.alto * 0.8} 0" 
+                                radius="${objeto.ancho * 0.25}" 
+                                radius-tubular="0.15" 
+                                color="${objeto.colorPiedra}"
+                                arc="180"
+                                rotation="0 0 90"
+                                roughness="0.7"></a-torus>
+                        <a-box position="0 ${objeto.alto * 1.1} 0" 
+                               width="${objeto.ancho}" 
+                               height="0.3" 
+                               depth="${objeto.profundidad * 0.8}" 
+                               color="${objeto.colorDetalles}"
+                               roughness="0.8"></a-box>
+                        <a-box position="${objeto.ancho * -0.35} ${objeto.alto * 1.3} 0" 
+                               width="0.15" 
+                               height="0.4" 
+                               depth="0.1" 
+                               color="${objeto.colorRelieve}"
+                               roughness="0.9"></a-box>
+                        <a-box position="${objeto.ancho * 0.35} ${objeto.alto * 1.3} 0" 
+                               width="0.15" 
+                               height="0.4" 
+                               depth="0.1" 
+                               color="${objeto.colorRelieve}"
+                               roughness="0.9"></a-box>
+                        <a-box position="0 ${objeto.alto * 0.5} 0" 
+                               width="${objeto.ancho * 0.4}" 
+                               height="${objeto.alto * 0.6}" 
+                               depth="0.05" 
+                               color="#87CEEB"
+                               opacity="0.6"
+                               roughness="0.1"
+                               metalness="0.9"></a-box>
+                    `;
+                    break;
+            }
+            
+            return html;
+        }
+
+        function generarEstriasColumna(objeto) {
+            let html = '';
+            const numEstrias = 20;
+            const angulo = 360 / numEstrias;
+            
+            for (let i = 0; i < numEstrias; i++) {
+                const rotation = i * angulo;
+                const x = Math.cos(rotation * Math.PI / 180) * objeto.ancho * 0.33;
+                const z = Math.sin(rotation * Math.PI / 180) * objeto.ancho * 0.33;
+                
+                html += `
+                    <a-box position="${x} 0 ${z}" 
+                           width="0.03" 
+                           height="${objeto.alto * 0.8}" 
+                           depth="0.05" 
+                           color="${objeto.colorDetalles}"
+                           rotation="0 ${rotation} 0"
+                           roughness="0.6"></a-box>
+                `;
+            }
+            
+            return html;
+        }
+
+        function generarPeldañosEspiral(objeto) {
+            let html = '';
+            const numPeldaños = 12;
+            const alturaPorPeldaño = objeto.alto / numPeldaños;
+            const anguloPorPeldaño = 360 / numPeldaños;
+            
+            for (let i = 0; i < numPeldaños; i++) {
+                const y = -objeto.alto/2 + (i * alturaPorPeldaño) + alturaPorPeldaño/2;
+                const rotation = i * anguloPorPeldaño;
+                const x = Math.cos(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.2);
+                const z = Math.sin(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.2);
+                
+                html += `
+                    <a-box position="${x} ${y} ${z}" 
+                           width="0.6" 
+                           height="0.05" 
+                           depth="0.2" 
+                           color="${objeto.colorMadera}"
+                           rotation="0 ${-rotation} 0"
+                           roughness="0.8"></a-box>
+                `;
+            }
+            
+            return html;
+        }
+
+        function generarBarrotesBaranda(objeto) {
+            let html = '';
+            const numBarrotes = 12;
+            const anguloPorBarrote = 360 / numBarrotes;
+            
+            for (let i = 0; i < numBarrotes; i++) {
+                const rotation = i * anguloPorBarrote;
+                const x = Math.cos(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.1);
+                const z = Math.sin(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.1);
+                
+                html += `
+                    <a-cylinder position="${x} ${objeto.alto * 0.5} ${z}" 
+                               radius="0.01" 
+                               height="${objeto.alto * 0.6}" 
+                               color="${objeto.colorMetal}"
+                               metalness="0.8"
+                               rotation="0 ${rotation} 0"></a-cylinder>
+                `;
+            }
+            
+            return html;
+        }
+
+        function obtenerHTML2DParaObjeto(objeto) {
+            return `
+                <div style="width: 300px; height: 200px; background: #E8F4FD; position: relative; border: 3px solid #1976D2; border-radius: 10px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="background: #1976D2; color: white; padding: 8px; text-align: center; font-weight: bold; border-radius: 7px 7px 0 0;">
+                        PLANO DE PLANTA - ${objeto.nombre.toUpperCase()}
+                    </div>
+                    <div style="padding: 15px; height: calc(100% - 40px); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="margin-bottom: 10px; transform: scale(1.2);">
+                            ${objeto.plantaHTML}
+                        </div>
+                        <div style="margin-top: 15px; text-align: center; color: #333; font-size: 12px; background: rgba(255, 255, 255, 0.8); padding: 8px; border-radius: 5px; border: 1px solid #BBDEFB; width: 90%;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                                <span><strong>Escala:</strong> 1:50</span>
+                                <span><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</span>
+                            </div>
+                            <div style="border-top: 1px dashed #90CAF9; padding-top: 5px; margin-top: 5px;">
+                                <strong>Descripción:</strong> ${objeto.plantaDescripcion}
+                            </div>
+                        </div>
+                        <div style="position: absolute; bottom: 10px; right: 10px; width: 30px; height: 30px; border: 2px solid #1976D2; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
+                            <span style="color: #1976D2; font-weight: bold;">N</span>
+                        </div>
+                        <div style="position: absolute; bottom: 10px; left: 10px; font-size: 10px; color: #555; background: rgba(255, 255, 255, 0.9); padding: 5px; border-radius: 3px; border: 1px solid #E3F2FD;">
+                            <div><strong>Referencias:</strong></div>
+                            <div>▸ Línea continua: Contorno</div>
+                            <div>▸ Línea discontinua: Elementos ocultos</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
+        // FUNCIONES DE NAVEGACIÓN BÁSICAS
+        // ============================================
+        
+        function mostrarConceptualizacion() {
+            document.getElementById('conceptual').style.display = 'none';
+            document.getElementById('conceptualizacion').style.display = 'flex';
+            document.getElementById('conceptualizacion').scrollTop = 0;
+        }
+        
+        // ============================================
+        // VOLVER AL INICIO - CORREGIDO
+        // ============================================
+        function volverInicio() {
+            document.getElementById('conceptual').style.display = 'flex';
+            document.getElementById('conceptualizacion').style.display = 'none';
+            document.getElementById('resultados').style.display = 'none';
+            document.getElementById('barra-superior').classList.add('oculto');
+            document.getElementById('panel-ia').classList.add('oculto');
+            document.getElementById('indicador-ar').classList.add('oculto');
+            document.getElementById('escena-ar').classList.add('oculto');
+            document.getElementById('escena-vr').classList.add('oculto');
+            
+            // LIMPIEZA CRÍTICA PARA AR.js
+            // Eliminar completamente las escenas AR
+            const escenaAR = document.getElementById('escena-ar');
+            escenaAR.innerHTML = '';
+            
+            // Limpiar escena VR
+            const escenaVR = document.getElementById('escena-vr');
+            escenaVR.innerHTML = '';
+            
+            // Intentar detener la cámara si está activa
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                if (video.srcObject) {
+                    const tracks = video.srcObject.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+            });
+            
+            // Eliminar cualquier canvas residual de AR.js
+            const canvases = document.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                if (canvas.style.position === 'fixed' || canvas.id.includes('arjs')) {
+                    canvas.remove();
+                }
+            });
+            
+            // Restablecer variables
+            puntaje = 0;
+            faseActual = 0;
+            marcadorDetectado = false;
+            respuestasUsuario = [];
+            modoVR = false;
+            fase2Respondida = false;
+            fase3Respondida = false;
+            fase2Avanzada = false;
+            fase3Avanzada = false;
+            
+            // Restablecer objetos
+            objetoFase1 = null;
+            objetoFase2 = null;
+            objetoFase3 = null;
+            
+            // Limpiar botón VR si existe
+            const botonVR = document.querySelector('.vr-gafas-btn');
+            if (botonVR) {
+                botonVR.remove();
+                botonVR = null;
+            }
+            
+            // Forzar recolección de basura (no directa, pero ayudamos)
+            if (window.gc) {
+                window.gc();
+            }
+        }
+        
+        function comenzarActividad() {
+            document.getElementById('conceptual').style.display = 'none';
+            document.getElementById('conceptualizacion').style.display = 'none';
+            document.getElementById('resultados').style.display = 'none';
+            
+            document.getElementById('barra-superior').classList.remove('oculto');
+            document.getElementById('panel-ia').classList.remove('oculto');
+            
+            // Inicializar controles de respuesta
+            fase2Respondida = false;
+            fase3Respondida = false;
+            fase2Avanzada = false;
+            fase3Avanzada = false;
+            
+            // Seleccionar objetos aleatorios para cada fase
+            objetoFase1 = seleccionarObjetoAleatorio();
+            objetoFase2 = seleccionarObjetoAleatorio();
+            objetoFase3 = seleccionarObjetoAleatorio();
+            
+            // Iniciar Fase 1
+            iniciarFase(0);
+        }
+        
+        function reiniciar() {
+            volverInicio();
+            setTimeout(() => {
+                comenzarActividad();
+            }, 100);
+        }
+
+        // ============================================
+        // VARIABLES GLOBALES
+        // ============================================
+        let puntaje = 0;
+        let faseActual = 0;
+        let marcadorDetectado = false;
+        let escenaARActual = null;
+        let respuestasUsuario = [];
+        let modoVR = false;
+        let botonVR = null;
+        let escenaVR = null;
+        let fase2Respondida = false;
+        let fase3Respondida = false;
+        let fase2Avanzada = false;
+        let fase3Avanzada = false;
+        
+        // ============================================
+        // INICIAR FASE
+        // ============================================
+        function iniciarFase(numFase) {
+            faseActual = numFase;
+            marcadorDetectado = false;
+            
+            if (botonVR) {
+                botonVR.remove();
+                botonVR = null;
+            }
+            modoVR = false;
+            
+            if (numFase === 0) {
+                // FASE 1: Vista Frontal en RA
+                document.getElementById('fase-actual').textContent = `Fase 1: Vista Frontal - ${objetoFase1.nombre}`;
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>FASE 1: VISTA FRONTAL - ${objetoFase1.nombre.toUpperCase()}</strong><br>` +
+                    `Escanea el marcador HIRO. Cuando veas el ${objetoFase1.nombre.toLowerCase()}, presiona el botón para validar la vista frontal.`;
+                
+                const contenedor = document.getElementById('contenedor-opciones');
+                contenedor.innerHTML = '';
+                
+                const boton = document.createElement('button');
+                boton.className = 'opcion-btn';
+                boton.textContent = `VALIDAR VISTA FRONTAL DEL ${objetoFase1.nombre.toUpperCase()}`;
+                boton.id = 'boton-validar';
+                
+                boton.onclick = function() {
+                    validarVistaFrontal();
+                };
+                
+                contenedor.appendChild(boton);
+                
+                configurarEscenaAR(false);
+                
+            } else if (numFase === 1) {
+                // FASE 2: Vista Superior en RV
+                document.getElementById('fase-actual').textContent = `Fase 2: Vista Superior - ${objetoFase2.nombre}`;
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>FASE 2: VISTA SUPERIOR - ${objetoFase2.nombre.toUpperCase()}</strong><br>` +
+                    `Para ver la vista superior del ${objetoFase2.nombre.toLowerCase()}, ¿debes trasladarte o rotar el objeto?<br>` +
+                    `<small style='color:#B0BEC5'>Usa las teclas WASD para moverte y el mouse para mirar alrededor</small>`;
+                
+                const contenedor = document.getElementById('contenedor-opciones');
+                contenedor.innerHTML = '';
+                
+                const opciones = ['TRASLADARME', 'ROTAR OBJETO'];
+                opciones.forEach(opcion => {
+                    const boton = document.createElement('button');
+                    boton.className = 'opcion-btn';
+                    boton.textContent = opcion;
+                    boton.onclick = function() {
+                        validarVistaSuperior(opcion);
+                    };
+                    contenedor.appendChild(boton);
+                });
+                
+                configurarEscenaVRConBoton();
+                
+            } else if (numFase === 2) {
+                // FASE 3: Conexión AR-VR
+                document.getElementById('fase-actual').textContent = `Fase 3: Conexión - ${objetoFase3.nombre}`;
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>FASE 3: CONEXIÓN - ${objetoFase3.nombre.toUpperCase()}</strong><br>` +
+                    `Esta vista 2D (planta) del ${objetoFase3.nombre.toLowerCase()}, ¿desde qué posición en RV la obtenías?`;
+                
+                const contenedor = document.getElementById('contenedor-opciones');
+                contenedor.innerHTML = '';
+                
+                const opciones = ['POSICIÓN SUPERIOR', 'POSICIÓN FRONTAL', 'POSICIÓN LATERAL'];
+                opciones.forEach(opcion => {
+                    const boton = document.createElement('button');
+                    boton.className = 'opcion-btn';
+                    boton.textContent = opcion;
+                    boton.onclick = function() {
+                        validarConexion(opcion);
+                    };
+                    contenedor.appendChild(boton);
+                });
+                
+                configurarEscenaAR(true);
+            }
+        }
+        
+        // ============================================
+        // CONFIGURAR ESCENA AR (FASE 1 Y 3) - CORREGIDA
+        // ============================================
+        function configurarEscenaAR(esVistaPlanta) {
+            document.getElementById('indicador-ar').classList.remove('oculto');
+            document.getElementById('escena-ar').classList.remove('oculto');
+            document.getElementById('escena-vr').classList.add('oculto');
+            
+            const objeto = esVistaPlanta ? objetoFase3 : objetoFase1;
+            
+            // IMPORTANTE: Forzar limpieza completa de AR.js
+            // Eliminar cualquier instancia previa de la escena
+            const escenaARContainer = document.getElementById('escena-ar');
+            escenaARContainer.innerHTML = '';
+            
+            // Pequeño retraso para asegurar la limpieza del DOM
+            setTimeout(() => {
+                const escenaHTML = `
+                    <a-scene 
+                        embedded 
+                        arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;"
+                        renderer="logarithmicDepthBuffer: true; antialias: true; precision: high;"
+                        vr-mode-ui="enabled: false"
+                    >
+                        <!-- Luces mejoradas -->
+                        <a-entity light="type: ambient; color: #FFFFFF; intensity: 0.8"></a-entity>
+                        <a-entity light="type: directional; color: #FFFFFF; intensity: 1.2" position="2 3 1" cast-shadow="true"></a-entity>
+                        <a-entity light="type: point; color: #FFEEDD; intensity: 0.5" position="0 2 2"></a-entity>
+                        
+                        <a-marker 
+                            preset="hiro" 
+                            id="marcador-hiro-${esVistaPlanta ? 'fase3' : 'fase1'}" 
+                            emitevents="true" 
+                            smooth="true"
+                            smoothCount="10"
+                            smoothTolerance="0.01"
+                            smoothThreshold="5"
+                        >
+                            <a-entity position="0 0.5 0" scale="0.4 0.4 0.4">
+                                ${esVistaPlanta ? `
+                                    <!-- FASE 3: VISTA PLANTA MEJORADA -->
+                                    <a-entity position="0 0.5 0">
+                                        <!-- Mesa/Base del plano -->
+                                        <a-box position="0 -0.05 0" 
+                                               width="2.5" 
+                                               height="0.1" 
+                                               depth="1.8" 
+                                               color="#5D4037"
+                                               roughness="0.9"></a-box>
+                                        
+                                        <!-- Plano arquitectónico -->
+                                        <a-plane id="plano-base-${objeto.id}" 
+                                                 position="0 0.1 0" 
+                                                 width="2.2" 
+                                                 height="1.5" 
+                                                 rotation="-90 0 0" 
+                                                 color="#FFFFFF"
+                                                 shader="flat"
+                                                 opacity="0.95">
+                                        </a-plane>
+                                        
+                                        <!-- Lápiz de arquitecto -->
+                                        <a-cylinder position="0.8 0.2 -0.6" 
+                                                   radius="0.015" 
+                                                   height="0.15" 
+                                                   color="#FF5722"
+                                                   rotation="45 0 0"></a-cylinder>
+                                        <a-cone position="0.8 0.27 -0.6" 
+                                               radius-bottom="0.02" 
+                                               radius-top="0.005" 
+                                               height="0.05" 
+                                               color="#795548"
+                                               rotation="45 0 0"></a-cone>
+                                        
+                                        <!-- Regla -->
+                                        <a-box position="-0.7 0.15 0.5" 
+                                               width="0.3" 
+                                               height="0.02" 
+                                               depth="0.02" 
+                                               color="#607D8B"
+                                               rotation="0 30 0"></a-box>
+                                    </a-entity>
+                                    
+                                    <!-- Título flotante -->
+                                    <a-text value="${objeto.nombre.toUpperCase()}" 
+                                           position="0 1.2 0" 
+                                           align="center" 
+                                           color="#1976D2" 
+                                           width="5"
+                                           font="roboto"
+                                           opacity="0.9"></a-text>
+                                    
+                                ` : `
+                                    <!-- FASE 1: OBJETO 3D MEJORADO -->
+                                    ${obtenerHTML3DParaObjeto(objeto)}
+                                    
+                                    <!-- Plataforma/base -->
+                                    <a-box position="0 ${-objeto.alto/2 - 0.05} 0" 
+                                           width="${objeto.ancho * 1.3}" 
+                                           height="0.1" 
+                                           depth="${objeto.profundidad * 1.3}" 
+                                           color="#5D4037"
+                                           roughness="0.9"></a-box>
+                                    
+                                    <!-- Título flotante -->
+                                    <a-text value="${objeto.nombre.toUpperCase()}" 
+                                           position="0 ${objeto.alto + 0.4} 0" 
+                                           align="center" 
+                                           color="#FFD700" 
+                                           width="4"
+                                           font="roboto"
+                                           opacity="0.9"></a-text>
+                                `}
+                            </a-entity>
+                        </a-marker>
+                        
+                        <a-entity camera></a-entity>
+                    </a-scene>
+                `;
+                
+                escenaARContainer.innerHTML = escenaHTML;
+                
+                // Si es Fase 3, agregar el plano específico dinámicamente
+                if (esVistaPlanta) {
+                    // Intentar varias veces para asegurar que el DOM está listo
+                    let intentos = 0;
+                    const maxIntentos = 20;
+                    
+                    const intervalo = setInterval(() => {
+                        const planoBase = document.getElementById(`plano-base-${objeto.id}`);
+                        if (planoBase) {
+                            clearInterval(intervalo);
+                            // Crear representación 3D del plano 2D
+                            const plano3D = document.createElement('a-entity');
+                            plano3D.setAttribute('position', '0 0.01 0');
+                            plano3D.setAttribute('scale', '0.9 0.9 0.9');
+                            plano3D.innerHTML = generarPlano3DParaObjeto(objeto);
+                            planoBase.appendChild(plano3D);
+                        }
+                        
+                        intentos++;
+                        if (intentos >= maxIntentos) {
+                            clearInterval(intervalo);
+                        }
+                    }, 100);
+                }
+            }, 50);
+        }
+        
+        function generarPlano3DParaObjeto(objeto) {
+            let html = '';
+            
+            switch(objeto.tipo) {
+                case 'ventana':
+                    html = `
+                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
+                        <a-plane position="0 0 0.001" width="1.5" height="0.5" color="#8B4513" opacity="0.8"></a-plane>
+                        <a-plane position="0 0 0.002" width="1.4" height="0.4" color="#87CEEB" opacity="0.6"></a-plane>
+                        <a-plane position="0 0 0.003" width="1.4" height="0.02" color="#654321" opacity="0.9"></a-plane>
+                        <a-plane position="0 0 0.003" width="0.02" height="0.4" color="#654321" opacity="0.9"></a-plane>
+                        <a-cylinder position="0 0.25 0.003" height="0.02" radius="0.2" color="#DAA520" 
+                                   rotation="90 0 0" open-ended="true" theta-length="180" opacity="0.9"></a-cylinder>
+                    `;
+                    break;
+                case 'puerta':
+                    html = `
+                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
+                        <a-plane position="0 0 0.001" width="0.6" height="1.0" color="#654321" opacity="0.8"></a-plane>
+                        <a-plane position="0 0.2 0.002" width="0.5" height="0.2" color="#8B7355" opacity="0.6"></a-plane>
+                        <a-plane position="0 -0.1 0.002" width="0.5" height="0.2" color="#8B7355" opacity="0.6"></a-plane>
+                        <a-plane position="0 -0.4 0.002" width="0.5" height="0.2" color="#8B7355" opacity="0.6"></a-plane>
+                        <a-sphere position="0.2 0 0.003" radius="0.03" color="#C0C0C0" opacity="0.9"></a-sphere>
+                        <a-plane position="0 0 0.004" width="0.7" height="1.1" color="#5D4037" opacity="0.3" wireframe="true"></a-plane>
+                    `;
+                    break;
+                case 'columna':
+                    html = `
+                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
+                        <a-sphere position="0 0 0.001" radius="0.25" color="#E8E8E8" opacity="0.8"></a-sphere>
+                        <a-torus position="0 0 0.002" radius="0.3" radius-tubular="0.02" color="#D3D3D3" opacity="0.6"></a-torus>
+                        <a-torus position="0 0 0.003" radius="0.2" radius-tubular="0.01" color="#A9A9A9" opacity="0.5" dash="true"></a-torus>
+                        <a-plane position="0 0 0.004" width="0.7" height="0.7" color="#808080" opacity="0.2" wireframe="true"></a-plane>
+                    `;
+                    break;
+                case 'escalera':
+                    html = `
+                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
+                        <a-torus position="0 0 0.001" radius="0.5" radius-tubular="0.02" color="#708090" opacity="0.7"></a-torus>
+                        <a-torus position="0 0 0.002" radius="0.4" radius-tubular="0.015" color="#DEB887" opacity="0.6" arc="270" dash="true"></a-torus>
+                        <a-torus position="0 0 0.003" radius="0.3" radius-tubular="0.01" color="#D2B48C" opacity="0.5" arc="180" dash="true"></a-torus>
+                        <a-sphere position="0 0 0.004" radius="0.1" color="#708090" opacity="0.8"></a-sphere>
+                    `;
+                    break;
+                case 'arco':
+                    html = `
+                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
+                        <a-plane position="0 0 0.001" width="1.2" height="0.4" color="#B8B8B8" opacity="0.8"></a-plane>
+                        <a-cylinder position="-0.3 0 0.002" radius="0.1" height="0.4" color="#989898" opacity="0.7"></a-cylinder>
+                        <a-cylinder position="0.3 0 0.002" radius="0.1" height="0.4" color="#989898" opacity="0.7"></a-cylinder>
+                        <a-torus position="0 0.15 0.003" radius="0.25" radius-tubular="0.05" color="#808080" opacity="0.7" arc="180" rotation="90 0 0"></a-torus>
+                    `;
+                    break;
+            }
+            
+            return html;
+        }
+        
+        // ============================================
+        // CONFIGURAR ESCENA VR CON BOTÓN (FASE 2)
+        // ============================================
+        function configurarEscenaVRConBoton() {
+            document.getElementById('indicador-ar').classList.add('oculto');
+            document.getElementById('escena-ar').classList.add('oculto');
+            document.getElementById('escena-vr').classList.remove('oculto');
+            
+            const objeto = objetoFase2;
+            
+            const escenaHTML = `
+                <a-scene 
+                    embedded 
+                    vr-mode-ui="enabled: true"
+                    renderer="antialias: true; precision: high"
+                    stats
+                >
+                    <a-sky color="#E3F2FD"></a-sky>
+                    
+                    <a-entity geometry="primitive: plane; width: 30; height: 30" 
+                             rotation="-90 0 0" 
+                             material="src: https://cdn.aframe.io/a-painter/images/floor.jpg; repeat: 10 10"
+                             position="0 0 0"
+                             shadow="receive: true"></a-entity>
+                    
+                    <a-entity position="0 1.5 -6" scale="1.2 1.2 1.2">
+                        ${obtenerHTML3DParaObjeto(objeto)}
+                        
+                        <a-cylinder position="0 ${-objeto.alto/2 - 0.2} 0" 
+                                   radius="${Math.max(objeto.ancho, objeto.profundidad) * 0.8}" 
+                                   height="0.4" 
+                                   color="#5D4037"
+                                   roughness="0.9"
+                                   segments-radial="32"></a-cylinder>
+                        
+                        ${objeto.tipo === 'arco' || objeto.tipo === 'puerta' ? `
+                            <a-box position="0 ${-objeto.alto/2 - 0.1} ${objeto.profundidad * 0.6}" 
+                                   width="${objeto.ancho * 0.8}" 
+                                   height="0.1" 
+                                   depth="0.8" 
+                                   color="#696969"
+                                   roughness="0.9"></a-box>
+                            <a-box position="0 ${-objeto.alto/2 - 0.05} ${objeto.profundidad * 0.9}" 
+                                   width="${objeto.ancho * 0.7}" 
+                                   height="0.1" 
+                                   depth="0.6" 
+                                   color="#808080"
+                                   roughness="0.9"></a-box>
+                        ` : ''}
+                    </a-entity>
+                    
+                    <a-entity position="0 2.5 -3">
+                        <a-text value="EXPLORA EL ${objeto.nombre.toUpperCase()}" 
+                               align="center" 
+                               color="#1976D2" 
+                               width="3"
+                               position="0 0.5 0"></a-text>
+                        <a-text value="WASD: Moverse | Mouse: Mirar" 
+                               align="center" 
+                               color="#FFFFFF" 
+                               width="2.5"
+                               position="0 0.2 0"
+                               opacity="0.8"></a-text>
+                        <a-text value="OBJETIVO: Encontrar la vista superior" 
+                               align="center" 
+                               color="#4CAF50" 
+                               width="2.5"
+                               position="0 -0.1 0"
+                               opacity="0.9"></a-text>
+                    </a-entity>
+                    
+                    <a-entity light="type: ambient; color: #FFFFFF; intensity: 0.7"></a-entity>
+                    <a-entity light="type: directional; color: #FFFFFF; intensity: 0.9" position="5 10 5" cast-shadow="true"></a-entity>
+                    <a-entity light="type: hemisphere; color: #87CEEB; groundColor: #4CAF50; intensity: 0.6"></a-entity>
+                    
+                    <a-entity position="10 8 -15">
+                        <a-sphere radius="1" color="#FFFFFF" opacity="0.7"></a-sphere>
+                        <a-sphere radius="0.8" color="#FFFFFF" opacity="0.7" position="1 0.3 0"></a-sphere>
+                        <a-sphere radius="0.6" color="#FFFFFF" opacity="0.7" position="-0.8 0.2 0.5"></a-sphere>
+                    </a-entity>
+                    
+                    <a-entity 
+                        id="main-camera"
+                        camera="fov: 80; userHeight: 1.6" 
+                        look-controls="pointerLockEnabled: true; touchEnabled: false"
+                        wasd-controls="acceleration: 80; fly: false"
+                        position="0 1.6 0">
+                        <a-cursor fuse="true" fuse-timeout="500"
+                                 material="color: #007AFF; shader: flat"
+                                 geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.012"
+                                 animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"></a-cursor>
+                    </a-entity>
+                </a-scene>
+            `;
+            
+            document.getElementById('escena-vr').innerHTML = escenaHTML;
+            
+            escenaVR = document.querySelector('#escena-vr a-scene');
+            
+            crearBotonVRInmediato();
+        }
+        
+        // ============================================
+        // FUNCIONES RESTANTES
+        // ============================================
+        
+        function crearBotonVRInmediato() {
+            if (botonVR) {
+                botonVR.remove();
+                botonVR = null;
+            }
+            
+            botonVR = document.createElement('button');
+            botonVR.className = 'vr-gafas-btn';
+            botonVR.id = 'btn-vr-gafas';
+            botonVR.innerHTML = '👓 ACTIVAR GAFAS VR';
+            botonVR.style.display = 'block';
+            botonVR.style.visibility = 'visible';
+            botonVR.style.opacity = '1';
+            
+            botonVR.onclick = function() {
+                toggleModoVR();
+            };
+            
+            document.body.appendChild(botonVR);
+        }
+        
+        function toggleModoVR() {
+            if (!escenaVR) {
+                escenaVR = document.querySelector('#escena-vr a-scene');
+                if (!escenaVR) {
+                    alert("Error: La escena VR no se cargó correctamente.");
+                    return;
+                }
+            }
+            
+            if (!modoVR) {
+                botonVR.innerHTML = '👓 CARGANDO VR...';
+                botonVR.disabled = true;
+                
+                escenaVR.enterVR().then(() => {
+                    modoVR = true;
+                    botonVR.innerHTML = '👓 DESACTIVAR GAFAS VR';
+                    botonVR.disabled = false;
+                    botonVR.style.background = 'linear-gradient(45deg, #4CAF50, #388E3C)';
+                    
+                    const objeto = objetoFase2;
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()} - GAFAS VR ACTIVADAS</strong><br>` +
+                        "<span class='mensaje-exito'>✅ Modo VR activado</span><br>" +
+                        `Usa las gafas VR para explorar el ${objeto.nombre.toLowerCase()} desde diferentes ángulos.`;
+                        
+                }).catch(error => {
+                    botonVR.innerHTML = '👓 ACTIVAR GAFAS VR';
+                    botonVR.disabled = false;
+                    botonVR.style.background = 'linear-gradient(45deg, #FF9800, #F57C00)';
+                    
+                    const objeto = objetoFase2;
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-error'>⚠️ VR no disponible</span><br>" +
+                        "Tu dispositivo/browser no soporta VR. Continúa en modo normal.";
+                });
+                
+            } else {
+                escenaVR.exitVR();
+                modoVR = false;
+                botonVR.innerHTML = '👓 ACTIVAR GAFAS VR';
+                botonVR.style.background = 'linear-gradient(45deg, #FF9800, #F57C00)';
+                
+                const objeto = objetoFase2;
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                    `Para ver la vista superior del ${objeto.nombre.toLowerCase()}, ¿debes trasladarte o rotar el objeto?<br>` +
+                    "<small style='color:#B0BEC5'>Usa las teclas WASD para moverte y el mouse para mirar alrededor</small>";
+            }
+        }
+        
+        function validarVistaFrontal() {
+            const boton = document.getElementById('boton-validar');
+            if (boton) {
+                boton.disabled = true;
+                boton.textContent = "VALIDANDO...";
+                boton.style.background = "#666";
+            }
+            
+            setTimeout(() => {
+                const calidad = Math.random();
+                let puntos = 0;
+                let retroalimentacion = "";
+                const objeto = objetoFase1;
+                
+                if (calidad > 0.7) {
+                    puntos = 30;
+                    retroalimentacion = `Excelente! Has identificado correctamente la vista frontal del ${objeto.nombre.toLowerCase()}`;
+                } else if (calidad > 0.4) {
+                    puntos = 20;
+                    retroalimentacion = `Buena comprensión de la vista frontal del ${objeto.nombre.toLowerCase()}`;
+                } else {
+                    puntos = 10;
+                    retroalimentacion = `Necesitas practicar más la vista frontal de objetos como el ${objeto.nombre.toLowerCase()}`;
+                }
+                
+                const indexFase1 = respuestasUsuario.findIndex(r => r.fase === 1);
+                if (indexFase1 === -1) {
+                    respuestasUsuario.push({
+                        fase: 1,
+                        objeto: objeto.nombre,
+                        puntos: puntos,
+                        retroalimentacion: retroalimentacion
+                    });
+                    
+                    puntaje += puntos;
+                    document.querySelector('#puntaje span').textContent = puntaje;
+                }
+                
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>FASE 1: VISTA FRONTAL - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                    "✅ Validación completada<br>+" + puntos + " puntos<br><br>" +
+                    `<em>Pasando a Fase 2 con un nuevo objeto...</em>`;
+                
+                setTimeout(() => {
+                    iniciarFase(1);
+                }, 2000);
+                
+            }, 2000);
+        }
+        
+        function validarVistaSuperior(opcion) {
+            let correcto = opcion === "TRASLADARME";
+            let puntos = 0;
+            let retroalimentacion = "";
+            const objeto = objetoFase2;
+            
+            const indexFase2 = respuestasUsuario.findIndex(r => r.fase === 2);
+            
+            if (indexFase2 === -1) {
+                fase2Respondida = true;
+                
+                if (correcto) {
+                    puntos = 40;
+                    retroalimentacion = `Excelente! Comprendiste que para ver el ${objeto.nombre.toLowerCase()} desde arriba debes trasladarte`;
+                    
+                    respuestasUsuario.push({
+                        fase: 2,
+                        objeto: objeto.nombre,
+                        opcion: opcion,
+                        correcto: correcto,
+                        puntos: puntos,
+                        retroalimentacion: retroalimentacion
+                    });
+                    
+                    puntaje += puntos;
+                    document.querySelector('#puntaje span').textContent = puntaje;
+                    
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-exito'>✅ ¡CORRECTO!</span><br>" +
+                        `Para ver la vista superior del ${objeto.nombre.toLowerCase()} necesitas trasladarte.<br>` +
+                        "+40 puntos<br><br>" +
+                        `<em>Pasando a Fase 3 con un nuevo objeto...</em>`;
+                    
+                    fase2Avanzada = true;
+                    setTimeout(() => {
+                        iniciarFase(2);
+                    }, 2000);
+                    
+                } else {
+                    retroalimentacion = `Recuerda: Para ver el ${objeto.nombre.toLowerCase()} desde arriba, rotarlo cambia su orientación, no tu perspectiva`;
+                    
+                    respuestasUsuario.push({
+                        fase: 2,
+                        objeto: objeto.nombre,
+                        opcion: opcion,
+                        correcto: correcto,
+                        puntos: 0,
+                        retroalimentacion: retroalimentacion
+                    });
+                    
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-error'>❌ Intenta nuevamente</span><br>" +
+                        `Rotar el ${objeto.nombre.toLowerCase()} cambia su orientación, no tu perspectiva. Intenta con otra opción.`;
+                }
+            } else {
+                if (correcto && !fase2Avanzada) {
+                    retroalimentacion = `Excelente! Comprendiste que para ver el ${objeto.nombre.toLowerCase()} desde arriba debes trasladarte`;
+                    
+                    respuestasUsuario[indexFase2].opcion = opcion;
+                    respuestasUsuario[indexFase2].correcto = correcto;
+                    respuestasUsuario[indexFase2].retroalimentacion = retroalimentacion;
+                    
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-exito'>✅ ¡Ahora es correcto!</span><br>" +
+                        `Para ver la vista superior del ${objeto.nombre.toLowerCase()} necesitas trasladarte.<br>` +
+                        `<em>Pasando a Fase 3 con un nuevo objeto...</em>`;
+                    
+                    fase2Avanzada = true;
+                    setTimeout(() => {
+                        iniciarFase(2);
+                    }, 2000);
+                } else if (!correcto) {
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-error'>❌ Sigue intentando</span><br>" +
+                        `Rotar el ${objeto.nombre.toLowerCase()} cambia su orientación, no tu perspectiva. Intenta con otra opción.`;
+                }
+            }
+        }
+        
+        function validarConexion(opcion) {
+            let correcto = opcion === "POSICIÓN SUPERIOR";
+            let puntos = 0;
+            let retroalimentacion = "";
+            const objeto = objetoFase3;
+            
+            const indexFase3 = respuestasUsuario.findIndex(r => r.fase === 3);
+            
+            if (indexFase3 === -1) {
+                fase3Respondida = true;
+                
+                if (correcto) {
+                    puntos = 30;
+                    retroalimentacion = `Perfecto! Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D`;
+                    
+                    respuestasUsuario.push({
+                        fase: 3,
+                        objeto: objeto.nombre,
+                        opcion: opcion,
+                        correcto: correcto,
+                        puntos: puntos,
+                        retroalimentacion: retroalimentacion
+                    });
+                    
+                    puntaje += puntos;
+                    document.querySelector('#puntaje span').textContent = puntaje;
+                    
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-exito'>✅ ¡EXCELENTE!</span><br>" +
+                        `Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D.<br>` +
+                        "+30 puntos<br><br>" +
+                        "<em>Actividad completada</em>";
+                    
+                    fase3Avanzada = true;
+                    setTimeout(() => {
+                        mostrarResultados();
+                    }, 2000);
+                    
+                } else {
+                    retroalimentacion = `La vista planta (2D) del ${objeto.nombre.toLowerCase()} se proyecta desde la posición superior en 3D`;
+                    
+                    respuestasUsuario.push({
+                        fase: 3,
+                        objeto: objeto.nombre,
+                        opcion: opcion,
+                        correcto: correcto,
+                        puntos: 0,
+                        retroalimentacion: retroalimentacion
+                    });
+                    
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-error'>❌ Revisa el concepto</strong><br>" +
+                        `La vista planta (2D) del ${objeto.nombre.toLowerCase()} se proyecta desde la posición superior. Intenta con otra opción.`;
+                }
+            } else {
+                if (correcto && !fase3Avanzada) {
+                    retroalimentacion = `Perfecto! Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D`;
+                    
+                    respuestasUsuario[indexFase3].opcion = opcion;
+                    respuestasUsuario[indexFase3].correcto = correcto;
+                    respuestasUsuario[indexFase3].retroalimentacion = retroalimentacion;
+                    
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-exito'>✅ ¡Ahora es correcto!</span><br>" +
+                        `Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D.<br>` +
+                        "<em>Actividad completada</em>";
+                    
+                    fase3Avanzada = true;
+                    setTimeout(() => {
+                        mostrarResultados();
+                    }, 2000);
+                } else if (!correcto) {
+                    document.getElementById('mensaje-ia').innerHTML = 
+                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
+                        "<span class='mensaje-error'>❌ Sigue intentando</strong><br>" +
+                        `La vista planta (2D) del ${objeto.nombre.toLowerCase()} se proyecta desde la posición superior. Intenta con otra opción.`;
+                }
+            }
+        }
+        
+        function mostrarResultados() {
+            document.getElementById('barra-superior').classList.add('oculto');
+            document.getElementById('panel-ia').classList.add('oculto');
+            document.getElementById('escena-ar').classList.add('oculto');
+            document.getElementById('escena-vr').classList.add('oculto');
+            document.getElementById('indicador-ar').classList.add('oculto');
+            
+            if (botonVR) {
+                botonVR.remove();
+                botonVR = null;
+            }
+            modoVR = false;
+            
+            document.getElementById('puntaje-final').textContent = puntaje;
+            generarRecomendaciones();
+            document.getElementById('resultados').style.display = 'flex';
+        }
+        
+        function generarRecomendaciones() {
+            const contenedor = document.getElementById('recomendaciones-container');
+            contenedor.innerHTML = '';
+            
+            const puntajeMaximo = 100;
+            const porcentaje = (puntaje / puntajeMaximo) * 100;
+            
+            let recomendacionesHTML = '<h3 style="color: #00BCD4; text-align: center; margin-bottom: 20px;">📈 RECOMENDACIONES PARA TU APRENDIZAJE</h3>';
+            
+            recomendacionesHTML += '<div style="margin: 15px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">';
+            recomendacionesHTML += '<p><strong style="color: #00BCD4;">Objetos arquitectónicos utilizados:</strong></p>';
+            const objetosUnicos = [];
+            respuestasUsuario.forEach(respuesta => {
+                if (!objetosUnicos.includes(respuesta.objeto)) {
+                    objetosUnicos.push(respuesta.objeto);
+                }
+            });
+            objetosUnicos.forEach(objeto => {
+                const objInfo = objetosArquitectonicos.find(o => o.nombre === objeto);
+                recomendacionesHTML += `<div style="margin: 8px 0; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 5px; border-left: 3px solid #00BCD4;">
+                    <strong>${objeto}:</strong> ${objInfo ? objInfo.descripcion : 'Elemento arquitectónico'}
+                </div>`;
+            });
+            recomendacionesHTML += '</div>';
+            
+            recomendacionesHTML += '<div style="margin: 15px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">';
+            
+            if (porcentaje >= 90) {
+                recomendacionesHTML += '<p><strong style="color: #FFD700; font-size: 18px;">🏛️ Nivel: Arquitecto Experto</strong></p>';
+                recomendacionesHTML += '<p>¡Excelente! Has demostrado dominio completo de vistas 2D y 3D en diversos objetos arquitectónicos.</p>';
+            } else if (porcentaje >= 70) {
+                recomendacionesHTML += '<p><strong style="color: #4CAF50; font-size: 18px;">📐 Nivel: Diseñador Competente</strong></p>';
+                recomendacionesHTML += '<p>Buen trabajo comprendiendo las relaciones espaciales en diferentes estructuras arquitectónicas.</p>';
+            } else if (porcentaje >= 50) {
+                recomendacionesHTML += '<p><strong style="color: #FF9800; font-size: 18px;">📏 Nivel: Aprendiz en Desarrollo</strong></p>';
+                recomendacionesHTML += '<p>Tienes una base sólida. Continúa practicando con diferentes tipos de objetos arquitectónicos.</p>';
+            } else {
+                recomendacionesHTML += '<p><strong style="color: #FF5252; font-size: 18px;">🎓 Nivel: Estudiante Principiante</strong></p>';
+                recomendacionesHTML += '<p>Revisa los conceptos básicos y practica con objetos más simples antes de continuar.</p>';
+            }
+            
+            recomendacionesHTML += '</div>';
+            
+            recomendacionesHTML += '<h4 style="color: #00BCD4; margin-top: 20px; margin-bottom: 10px;">📋 Análisis por objeto:</h4>';
+            recomendacionesHTML += '<div style="margin-left: 10px;">';
+            
+            const fasesUnicas = [];
+            const respuestasFiltradas = [];
+            
+            respuestasUsuario.forEach(respuesta => {
+                if (!fasesUnicas.includes(respuesta.fase)) {
+                    fasesUnicas.push(respuesta.fase);
+                    respuestasFiltradas.push(respuesta);
+                }
+            });
+            
+            respuestasFiltradas.forEach(respuesta => {
+                const objInfo = objetosArquitectonicos.find(o => o.nombre === respuesta.objeto);
+                recomendacionesHTML += `<div class="recomendacion-item">`;
+                recomendacionesHTML += `<strong>${respuesta.objeto} (Fase ${respuesta.fase}):</strong> ${respuesta.retroalimentacion}`;
+                if (objInfo && respuesta.puntos > 0) {
+                    recomendacionesHTML += ` <span style="color: #FFD700; font-size: 0.9em;">(+${respuesta.puntos}p)</span>`;
+                }
+                recomendacionesHTML += `</div>`;
+            });
+            
+            recomendacionesHTML += '</div>';
+            
+            recomendacionesHTML += '<h4 style="color: #00BCD4; margin-top: 20px; margin-bottom: 10px;">💡 Para convertirte en un verdadero Arquitecto de Vistas:</h4>';
+            recomendacionesHTML += '<div style="margin-left: 10px;">';
+            
+            if (porcentaje < 70) {
+                recomendacionesHTML += '<div class="recomendacion-item">Estudia planos arquitectónicos reales para entender mejor las representaciones 2D</div>';
+                recomendacionesHTML += '<div class="recomendacion-item">Analiza edificios reales identificando sus vistas principales</div>';
+                recomendacionesHTML += '<div class="recomendacion-item">Practica dibujando vistas de objetos arquitectónicos complejos</div>';
+            }
+            
+            recomendacionesHTML += '<div class="recomendacion-item">Intenta visualizar cómo se verían otros objetos arquitectónicos desde diferentes ángulos</div>';
+            recomendacionesHTML += '<div class="recomendacion-item">Usa el modo VR para una comprensión espacial más profunda</div>';
+            recomendacionesHTML += '<div class="recomendacion-item">Compara planos 2D con fotografías de edificios reales</div>';
+            
+            recomendacionesHTML += '</div>';
+            
+            const frases = [
+                "Como dijo Louis Kahn: 'Un edificio bien diseñado es una obra de arte en tres dimensiones'",
+                "Recuerda: La grandeza de la arquitectura está en la conexión entre concepto y forma",
+                "Cada objeto arquitectónico cuenta una historia a través de sus vistas y proporciones",
+                "La verdadera maestría en arquitectura comienza con la comprensión espacial"
+            ];
+            
+            const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
+            recomendacionesHTML += `<div style="margin-top: 20px; padding: 15px; background: rgba(0, 188, 212, 0.1); border-radius: 10px; text-align: center; font-style: italic;">
+                <div style="color: #00BCD4; margin-bottom: 5px;">🏛️ Sabiduría Arquitectónica</div>
+                "${fraseAleatoria}"
+            </div>`;
+            
+            contenedor.innerHTML = recomendacionesHTML;
+        }
+    </script>
+</body>
+</html>
