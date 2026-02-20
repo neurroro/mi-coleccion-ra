@@ -2,16 +2,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Arquitecto de Vistas</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <title>Arquitecto de Vistas - TUTOR IA FUNCIONAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Estilos -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { 
             width: 100vw; 
             height: 100vh; 
             overflow: hidden;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
         
         #conceptual, #conceptualizacion, #resultados {
@@ -78,6 +79,7 @@
             padding: 0 20px;
             z-index: 900;
             border-bottom: 2px solid #00BCD4;
+            backdrop-filter: blur(5px);
         }
         
         #panel-ia {
@@ -92,6 +94,7 @@
             max-height: 40vh;
             overflow-y: auto;
             border-top: 2px solid #00BCD4;
+            backdrop-filter: blur(5px);
         }
         
         .opcion-btn {
@@ -137,6 +140,8 @@
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
         }
         
         #escena-ar, #escena-vr {
@@ -160,7 +165,6 @@
             font-weight: bold;
         }
         
-        /* BOTÓN VR */
         .vr-gafas-btn {
             position: fixed !important;
             top: 80px !important;
@@ -181,6 +185,8 @@
             box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3) !important;
             visibility: visible !important;
             opacity: 1 !important;
+            backdrop-filter: blur(5px) !important;
+            border: 2px solid rgba(255,255,255,0.3) !important;
         }
         
         .vr-gafas-btn:hover {
@@ -189,7 +195,6 @@
             box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4) !important;
         }
         
-        /* CONTENEDOR DE RESULTADOS */
         .resultados-container {
             width: 100%;
             max-width: 800px;
@@ -211,6 +216,8 @@
             box-sizing: border-box;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .recomendacion-item {
@@ -246,7 +253,6 @@
             font-weight: bold;
         }
         
-        /* ESTILOS PARA CONCEPTUALIZACIÓN - MEJORADA */
         .contenido-conceptual {
             max-width: 900px;
             width: 100%;
@@ -262,6 +268,8 @@
             margin: 20px 0;
             border-left: 5px solid #00BCD4;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .concepto-imagen-container {
@@ -304,28 +312,144 @@
         .concepto-lista li {
             margin: 8px 0;
         }
+
+        #qr-visualizacion {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            z-index: 2000;
+            text-align: center;
+            border: 3px solid #00BCD4;
+        }
+        
+        #qr-visualizacion canvas {
+            display: block;
+            margin: 10px auto;
+            border: 2px solid #333;
+        }
+        
+        #btn-cerrar-qr {
+            background: #FF5252;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .qr-info {
+            color: #333;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        
+        #contenedor-ar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+        
+        #contenedor-ar canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+        
+        #distancia-info {
+            position: fixed;
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #FFD700;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 801;
+            border: 1px solid #00BCD4;
+            backdrop-filter: blur(5px);
+        }
+        
+        #ia-status {
+            font-size: 12px;
+            color: #00BCD4;
+            margin-top: 5px;
+        }
+        #ia-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 5px;
+            display: none;
+        }
+        #ia-progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: #00BCD4;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+        .ia-verification {
+            font-size: 10px;
+            color: #87CEEB;
+            margin-top: 5px;
+            border-top: 1px dashed #00BCD4;
+            padding-top: 5px;
+            font-family: monospace;
+        }
     </style>
+    
+    <!-- Import Maps para MindAR -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/",
+                "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-three.prod.js"
+            }
+        }
+    </script>
+    
+    <!-- A-Frame para VR -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 </head>
 <body>
     <!-- PANTALLA INICIAL -->
     <div id="conceptual">
-        <h1 style="color: #00BCD4; margin-bottom: 20px; font-size: 3em;">ARQUITECTO DE VISTAS</h1>
+        <h1 style="color: #00BCD4; margin-bottom: 20px; font-size: 3em; text-shadow: 0 0 20px rgba(0,188,212,0.5);">ARQUITECTO DE VISTAS + TUTOR IA</h1>
         <div style="color: #B0BEC5; margin-bottom: 30px; font-size: 18px; max-width: 600px;">
-            Aprende a visualizar objetos en 2D y 3D a través de Realidad Aumentada y Virtual
+            Sistema Tutor Inteligente con RA y RV
         </div>
-        <div style="text-align: left; max-width: 500px; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px;">
-            <p><strong style="color: #00BCD4;">Conceptos que aprenderás:</strong></p>
-            <p>1. Vista frontal en Realidad Aumentada</p>
-            <p>2. Vista superior en Realidad Virtual</p>
-            <p>3. Conexión entre vistas 2D y 3D</p>
+        <div style="text-align: left; max-width: 500px; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
+            <p><strong style="color: #00BCD4;">Características:</strong></p>
+            <p>✅ RA+RV+IA</p>
+            <p>✅ Inmersión visual</p>
+            <p>✅ Recomendaciones personalizadas por IA</p>
+            <p>✅ Verificación visible en cada mensaje</p>
         </div>
-        <button class="btn" onclick="mostrarConceptualizacion()">📚 ESTUDIAR CONCEPTOS</button>
-        <button class="btn" onclick="comenzarActividad()">🚀 COMENZAR PRÁCTICA</button>
+        <button class="btn" onclick="window.mostrarConceptualizacion()">📚 ESTUDIAR CONCEPTOS</button>
+        <button class="btn" onclick="window.comenzarActividad()">🚀 COMENZAR PRÁCTICA</button>
     </div>
 
     <!-- PANTALLA CONCEPTUALIZACIÓN -->
     <div id="conceptualizacion">
-        <h1 style="color: #00BCD4; margin-bottom: 20px;">📚 CONCEPTUALIZACIÓN</h1>
+        <h1 style="color: #00BCD4; margin-bottom: 20px; text-shadow: 0 0 20px rgba(0,188,212,0.5);">📚 CONCEPTUALIZACIÓN</h1>
         
         <div class="contenido-conceptual">
             <!-- Concepto 1: Vista Frontal -->
@@ -335,9 +459,9 @@
                 
                 <div class="concepto-imagen-container">
                     <div class="diagrama" style="background: linear-gradient(45deg, #2C3E50, #34495E);">
-                        <div style="width: 120px; height: 160px; background: linear-gradient(45deg, #8B4513, #A0522D); border: 3px solid #00BCD4; position: relative;">
+                        <div style="width: 120px; height: 160px; background: linear-gradient(45deg, #8B4513, #A0522D); border: 3px solid #00BCD4; position: relative; box-shadow: 0 0 20px rgba(0,188,212,0.3);">
                             <div style="position: absolute; width: 110px; height: 150px; background: #87CEEB; opacity: 0.7; top: 5px; left: 5px;"></div>
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold;">FRONTAL</div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">FRONTAL</div>
                         </div>
                     </div>
                 </div>
@@ -360,7 +484,7 @@
                 
                 <div class="concepto-imagen-container">
                     <div class="diagrama" style="background: linear-gradient(45deg, #1565C0, #1976D2);">
-                        <div style="width: 150px; height: 100px; background: #2196F3; position: relative; border: 2px solid #FFD700;">
+                        <div style="width: 150px; height: 100px; background: #2196F3; position: relative; border: 2px solid #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.3);">
                             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold;">PLANTA</div>
                             <div style="position: absolute; width: 60px; height: 30px; background: rgba(255, 255, 255, 0.8); top: 35px; left: 45px;"></div>
                         </div>
@@ -386,14 +510,11 @@
                 <div class="concepto-imagen-container">
                     <div class="diagrama" style="background: linear-gradient(45deg, #1A237E, #283593);">
                         <div style="display: flex; align-items: center; gap: 20px;">
-                            <!-- Objeto 3D -->
-                            <div style="width: 80px; height: 80px; background: linear-gradient(45deg, #4CAF50, #388E3C); transform: perspective(300px) rotateX(20deg) rotateY(20deg); position: relative;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(45deg, #4CAF50, #388E3C); transform: perspective(300px) rotateX(20deg) rotateY(20deg); position: relative; box-shadow: 0 0 20px rgba(76,175,80,0.5);">
                                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 12px;">3D</div>
                             </div>
-                            <!-- Flecha -->
                             <div style="color: #FFD700; font-size: 24px;">→</div>
-                            <!-- Vista 2D -->
-                            <div style="width: 100px; height: 60px; background: linear-gradient(45deg, #FF9800, #F57C00); position: relative;">
+                            <div style="width: 100px; height: 60px; background: linear-gradient(45deg, #FF9800, #F57C00); position: relative; box-shadow: 0 0 20px rgba(255,152,0,0.5);">
                                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 12px;">2D</div>
                             </div>
                         </div>
@@ -411,14 +532,27 @@
                 </ul>
             </div>
             
+            <!-- Información sobre QR -->
+            <div class="concepto-card" style="background: linear-gradient(135deg, rgba(0, 188, 212, 0.15), rgba(0, 122, 255, 0.15)); border-left: 5px solid #FFD700;">
+                <h2 style="color: #FFD700; text-align: center;">📱 QR ESPECIAL</h2>
+                <p>En esta actividad usarás un código QR personalizado con la palabra <strong>"ARQUITECTO"</strong> para activar la realidad aumentada:</p>
+                <ol class="concepto-lista">
+                    <li><strong>Fase 1:</strong> Escanea el QR para ver la vista frontal del objeto en 3D</li>
+                    <li><strong>Fase 3:</strong> Escanea el QR para ver el plano 2D del objeto</li>
+                </ol>
+                <p style="text-align: center; margin-top: 15px;">
+                    <button class="btn" style="max-width: 200px; padding: 10px;" onclick="mostrarQR()">🔍 VER QR</button>
+                </p>
+            </div>
+            
             <!-- Ejercicio de práctica mental -->
             <div class="concepto-card" style="background: linear-gradient(135deg, rgba(0, 188, 212, 0.15), rgba(0, 122, 255, 0.15)); border-left: 5px solid #FFD700;">
                 <h2 style="color: #FFD700; text-align: center;">🧠 ¿Listo para practicar?</h2>
                 <p>Ahora aplicarás estos conceptos en una actividad interactiva:</p>
                 <ol class="concepto-lista">
-                    <li><strong>Fase 1:</strong> Usarás Realidad Aumentada para ver la vista frontal</li>
+                    <li><strong>Fase 1:</strong> Usarás Realidad Aumentada con QR "ARQUITECTO" para ver la vista frontal</li>
                     <li><strong>Fase 2:</strong> Explorarás en Realidad Virtual para encontrar la vista superior</li>
-                    <li><strong>Fase 3:</strong> Conectarás las vistas 2D con posiciones 3D</li>
+                    <li><strong>Fase 3:</strong> Conectarás las vistas 2D con posiciones 3D usando QR</li>
                 </ol>
                 <p><strong>Recuerda:</strong> No se trata de memorizar, sino de entender cómo se relacionan las diferentes representaciones de un objeto.</p>
             </div>
@@ -436,32 +570,41 @@
         <div id="puntaje" style="font-size: 18px; font-weight: bold;">Puntos: <span style="color: #FFD700;">0</span></div>
     </div>
 
-    <!-- INDICADOR -->
-    <div id="indicador-ar" class="oculto">📱 Escanea el marcador HIRO</div>
+    <!-- INDICADOR AR (solo visible en Fase 1 y 3) -->
+    <div id="indicador-ar" class="oculto">📱 Escanea el QR con la palabra "ARQUITECTO"</div>
+    
+    <!-- INFO DE DISTANCIA (solo visible en AR) -->
+    <div id="distancia-info" class="oculto">📏 Distancia: <span id="distancia-valor">0</span> cm</div>
 
     <!-- ESCENAS -->
     <div id="escena-ar" class="oculto"></div>
+    <div id="contenedor-ar" class="oculto" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;"></div>
     <div id="escena-vr" class="oculto"></div>
 
     <!-- PANEL IA -->
     <div id="panel-ia" class="oculto">
         <div id="mensaje-ia">Preparando actividad...</div>
+        <div id="ia-status"></div>
+        <div id="ia-progress-bar">
+            <div id="ia-progress-bar-fill"></div>
+        </div>
         <div id="contenedor-opciones" style="margin-top: 15px;"></div>
+        <div id="ia-verification" class="ia-verification"></div>
     </div>
 
     <!-- RESULTADOS -->
     <div id="resultados">
         <div class="resultados-container">
-            <h1 style="color: #00BCD4; margin-bottom: 10px; font-size: 2.5em;">🎉 ACTIVIDAD COMPLETADA</h1>
+            <h1 style="color: #00BCD4; margin-bottom: 10px; font-size: 2.5em; text-shadow: 0 0 20px rgba(0,188,212,0.5);">🎉 ACTIVIDAD COMPLETADA</h1>
             <div style="color: #B0BEC5; margin-bottom: 30px; font-size: 18px;">
-                ¡Excelente trabajo! Revisa tus resultados y recomendaciones
+                Análisis generado por el tutor IA
             </div>
             
             <div class="puntaje-final" id="puntaje-final">0</div>
             <h3 style="margin-bottom: 30px; color: #B0BEC5;">PUNTUACIÓN FINAL</h3>
             
             <div class="recomendaciones" id="recomendaciones-container">
-                <!-- Las recomendaciones se generarán dinámicamente aquí -->
+                <!-- Las recomendaciones se generarán dinámicamente con IA -->
             </div>
             
             <div class="botones-final">
@@ -471,7 +614,109 @@
         </div>
     </div>
 
-    <script>
+    <!-- VISUALIZACIÓN QR -->
+    <div id="qr-visualizacion" style="display: none;">
+        <div style="font-weight: bold; color: #1976D2;">QR "ARQUITECTO"</div>
+        <canvas id="qr-canvas" width="200" height="200"></canvas>
+        <div class="qr-info">Escanea este código QR para activar RA</div>
+        <button id="btn-cerrar-qr" onclick="cerrarQR()">Cerrar</button>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // IMPORTACIONES
+        // ============================================
+        import * as THREE from 'three';
+        import { MindARThree } from 'mindar-image-three';
+
+        // ============================================
+        // CONFIGURACIÓN DE LOGS
+        // ============================================
+        const LOG_URL = 'https://script.google.com/macros/s/AKfycbzgSxgwQQgiT3aDp7Vn6staeY4-Evpz9n68bg2JxIAYanQjJm12thZ2yc3HNaQCqXLO/exec';
+        
+        let estudianteId = localStorage.getItem('estudianteId');
+        if (!estudianteId) {
+            estudianteId = 'est_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('estudianteId', estudianteId);
+        }
+
+        let tiempoInicioFase = null;
+        let tiemposPorFase = { 0: 0, 1: 0, 2: 0 };
+
+        function iniciarTemporizadorFase(numFase) {
+            tiempoInicioFase = Date.now();
+        }
+
+        function guardarTiempoFase(numFase) {
+            if (tiempoInicioFase) {
+                tiemposPorFase[numFase] = Date.now() - tiempoInicioFase;
+                tiempoInicioFase = null;
+            }
+        }
+
+        async function enviarLog(evento, objetoActual = null, opcionElegida = null, correcto = null, puntos = 0, metadata = {}) {
+            try {
+                const timestamp = new Date().toISOString();
+                
+                let fase = '';
+                let objeto = '';
+                let tiempoRespuesta = 0;
+                
+                switch(faseActual) {
+                    case 0:
+                        fase = 'Fase 1 - Vista Frontal';
+                        objeto = objetoFase1 ? objetoFase1.nombre : 'desconocido';
+                        tiempoRespuesta = tiemposPorFase[0];
+                        break;
+                    case 1:
+                        fase = 'Fase 2 - Vista Superior';
+                        objeto = objetoFase2 ? objetoFase2.nombre : 'desconocido';
+                        tiempoRespuesta = tiemposPorFase[1];
+                        break;
+                    case 2:
+                        fase = 'Fase 3 - Conexión';
+                        objeto = objetoFase3 ? objetoFase3.nombre : 'desconocido';
+                        tiempoRespuesta = tiemposPorFase[2];
+                        break;
+                    default:
+                        fase = 'Conceptualización';
+                }
+                
+                if (objetoActual) {
+                    objeto = objetoActual;
+                }
+                
+                const logData = {
+                    timestamp: timestamp,
+                    estudianteId: estudianteId,
+                    fase: fase,
+                    evento: evento,
+                    objetoActual: objeto,
+                    opcionElegida: opcionElegida || '',
+                    correcto: correcto !== null ? (correcto ? 'Sí' : 'No') : '',
+                    puntos: puntos || 0,
+                    tiempoRespuesta: tiempoRespuesta,
+                    metadata: JSON.stringify({
+                        puntajeTotal: puntaje,
+                        tiemposPorFase: tiemposPorFase,
+                        ...metadata
+                    })
+                };
+                
+                console.log('Enviando log:', logData);
+                
+                await fetch(LOG_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(logData)
+                });
+                
+            } catch (error) {
+                console.error('Error enviando log:', error);
+            }
+        }
+
         // ============================================
         // BASE DE DATOS DE OBJETOS ARQUITECTÓNICOS
         // ============================================
@@ -488,17 +733,8 @@
                 alto: 2.2,
                 profundidad: 0.15,
                 textura: "madera",
-                plantaHTML: `
-                    <div style="width: 90px; height: 40px; position: relative;">
-                        <div style="width: 100%; height: 100%; border: 3px solid #8B4513; background: rgba(255, 255, 255, 0.9); border-radius: 5px;">
-                            <div style="width: 84px; height: 34px; background: linear-gradient(135deg, rgba(135, 206, 235, 0.6), rgba(173, 216, 230, 0.8)); margin: 3px; border-radius: 2px;"></div>
-                            <div style="position: absolute; width: 86px; height: 2px; background: #654321; top: 50%; left: 2px;"></div>
-                            <div style="position: absolute; width: 2px; height: 36px; background: #654321; left: 50%; top: 2px;"></div>
-                        </div>
-                        <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 20px; height: 8px; background: #8B4513; border-radius: 10px 10px 0 0;"></div>
-                    </div>
-                `,
-                plantaDescripcion: "Rectángulo con arco superior y divisiones cruciformes"
+                caracteristicas: "Su arco de medio punto distribuye las cargas hacia los lados, permitiendo vanos más amplios sin perder estabilidad. Típico del románico.",
+                ejercicioComplementario: "Dibuja una ventana arqueada en vista frontal y luego intenta representar cómo sería su planta (vista superior). Observa cómo el arco se proyecta como una línea curva en planta."
             },
             {
                 id: 2,
@@ -512,18 +748,8 @@
                 alto: 2.4,
                 profundidad: 0.1,
                 textura: "madera_tallada",
-                plantaHTML: `
-                    <div style="width: 60px; height: 100px; position: relative;">
-                        <div style="width: 100%; height: 100%; background: linear-gradient(to right, #654321, #8B4513); border: 2px solid #5D4037; border-radius: 3px;">
-                            <div style="width: 50px; height: 20px; background: rgba(139, 115, 85, 0.3); border: 1px solid #8B7355; position: absolute; top: 15px; left: 5px;"></div>
-                            <div style="width: 50px; height: 20px; background: rgba(139, 115, 85, 0.3); border: 1px solid #8B7355; position: absolute; top: 40px; left: 5px;"></div>
-                            <div style="width: 50px; height: 20px; background: rgba(139, 115, 85, 0.3); border: 1px solid #8B7355; position: absolute; top: 65px; left: 5px;"></div>
-                            <div style="width: 6px; height: 6px; background: radial-gradient(circle, #C0C0C0, #808080); border-radius: 50%; position: absolute; top: 50px; right: 8px; box-shadow: 0 0 3px rgba(192, 192, 192, 0.8);"></div>
-                        </div>
-                        <div style="position: absolute; width: 70px; height: 110px; border: 2px solid #5D4037; top: -5px; left: -5px; z-index: -1;"></div>
-                    </div>
-                `,
-                plantaDescripcion: "Rectángulo vertical con paneles y marco, círculo para manija"
+                caracteristicas: "Los paneles de madera tallada no solo son decorativos, sino que refuerzan la estructura y evitan deformaciones. Técnica del Renacimiento.",
+                ejercicioComplementario: "Observa una puerta real y analiza cómo cambiaría su representación en vista frontal vs vista superior. En planta, ¿qué forma tiene el umbral?"
             },
             {
                 id: 3,
@@ -537,16 +763,8 @@
                 alto: 3.0,
                 profundidad: 0.9,
                 textura: "marmol",
-                plantaHTML: `
-                    <div style="width: 45px; height: 45px; position: relative;">
-                        <div style="width: 100%; height: 100%; background: radial-gradient(circle, #E8E8E8, #D3D3D3); border-radius: 50%; border: 2px solid #A9A9A9;">
-                            <div style="width: 80%; height: 80%; background: transparent; border: 1px solid #A9A9A9; border-radius: 50%; position: absolute; top: 10%; left: 10%;"></div>
-                            <div style="width: 60%; height: 60%; background: transparent; border: 1px dashed #A9A9A9; border-radius: 50%; position: absolute; top: 20%; left: 20%;"></div>
-                        </div>
-                        <div style="width: 55px; height: 55px; background: rgba(169, 169, 169, 0.3); position: absolute; top: -5px; left: -5px; z-index: -1; border: 1px solid #808080;"></div>
-                    </div>
-                `,
-                plantaDescripcion: "Círculo concéntrico dentro de cuadrado, representación de columna"
+                caracteristicas: "El capitel con hojas de acanto representa el orden más ornamentado de la arquitectura clásica griega. La altura total es aproximadamente 10 veces su diámetro.",
+                ejercicioComplementario: "Identifica columnas en edificios de tu ciudad y clasifícalas por su orden arquitectónico (dórico, jónico, corintio). Dibuja sus diferentes vistas."
             },
             {
                 id: 4,
@@ -560,20 +778,8 @@
                 alto: 2.8,
                 profundidad: 2.5,
                 textura: "madera_metal",
-                plantaHTML: `
-                    <div style="width: 125px; height: 125px; position: relative;">
-                        <div style="width: 100%; height: 100%; border: 2px solid #708090; border-radius: 50%; background: rgba(112, 128, 144, 0.1);">
-                            <div style="width: 80%; height: 80%; border: 2px solid #DEB887; border-radius: 50%; position: absolute; top: 10%; left: 10%; border-top-color: transparent; border-right-color: transparent;"></div>
-                            <div style="width: 60%; height: 60%; border: 2px solid #D2B48C; border-radius: 50%; position: absolute; top: 20%; left: 20%; border-top-color: transparent; border-right-color: transparent;"></div>
-                            <div style="width: 40%; height: 40%; border: 2px solid #8B7355; border-radius: 50%; position: absolute; top: 30%; left: 30%; border-top-color: transparent; border-right-color: transparent;"></div>
-                            <div style="width: 20%; height: 20%; background: #708090; border-radius: 50%; position: absolute; top: 40%; left: 40%;"></div>
-                            <div style="position: absolute; width: 10px; height: 3px; background: #D2B48C; top: 20%; left: 50%; transform: translateX(-50%);"></div>
-                            <div style="position: absolute; width: 10px; height: 3px; background: #D2B48C; top: 50%; right: 20%;"></div>
-                            <div style="position: absolute; width: 10px; height: 3px; background: #D2B48C; bottom: 20%; left: 50%; transform: translateX(-50%);"></div>
-                        </div>
-                    </div>
-                `,
-                plantaDescripcion: "Espiral concéntrica representando escalera caracol"
+                caracteristicas: "La forma helicoidal optimiza el espacio vertical y es estructuralmente autoportante. Común en torres medievales y faros.",
+                ejercicioComplementario: "Dibuja la proyección en planta de una escalera caracol y compara con su alzado. ¿Cómo se representa el giro en 2D?"
             },
             {
                 id: 5,
@@ -587,396 +793,653 @@
                 alto: 4.0,
                 profundidad: 1.5,
                 textura: "piedra_tallada",
-                plantaHTML: `
-                    <div style="width: 150px; height: 75px; position: relative;">
-                        <div style="width: 100%; height: 100%; background: linear-gradient(to bottom, #B8B8B8, #989898); border: 2px solid #808080; border-radius: 5px;">
-                            <div style="width: 20px; height: 60px; background: #989898; border: 2px solid #808080; position: absolute; top: 7.5px; left: 20px;"></div>
-                            <div style="width: 20px; height: 60px; background: #989898; border: 2px solid #808080; position: absolute; top: 7.5px; right: 20px;"></div>
-                            <div style="width: 70px; height: 40px; border: 3px solid #808080; border-top: none; border-radius: 0 0 35px 35px; position: absolute; top: 0; left: 40px;"></div>
-                            <div style="width: 30px; height: 50px; border: 2px solid #989898; position: absolute; top: 12.5px; left: 50px; background: rgba(128, 128, 128, 0.2);"></div>
-                            <div style="width: 30px; height: 50px; border: 2px solid #989898; position: absolute; top: 12.5px; right: 50px; background: rgba(128, 128, 128, 0.2);"></div>
-                        </div>
-                    </div>
-                `,
-                plantaDescripcion: "Estructura con columnas, arco central y vanos laterales"
+                caracteristicas: "Símbolo de poder en la arquitectura romana. El arco de medio punto permite luces grandes y el ático superior servía para inscripciones conmemorativas.",
+                ejercicioComplementario: "Investiga el Arco de Constantino en Roma y analiza sus proporciones en alzado y planta. ¿Qué relación hay entre el ancho del arco y su altura?"
             }
         ];
 
-        // Variables para rastrear objetos seleccionados por fase
-        let objetoFase1 = null;
-        let objetoFase2 = null;
-        let objetoFase3 = null;
-
         // ============================================
-        // FUNCIONES PARA MANEJO DE OBJETOS
+        // FUNCIONES PARA CREAR OBJETOS 3D (FASE 1)
         // ============================================
         
-        function seleccionarObjetoAleatorio() {
-            const indice = Math.floor(Math.random() * objetosArquitectonicos.length);
-            return objetosArquitectonicos[indice];
+        function crearVentana(objeto) {
+            const grupo = new THREE.Group();
+            
+            const texturaMadera = (color) => {
+                return new THREE.MeshStandardMaterial({ 
+                    color: color, 
+                    roughness: 0.6, 
+                    metalness: 0.2,
+                    emissive: new THREE.Color(0x221100),
+                    emissiveIntensity: 0.1
+                });
+            };
+            
+            const marcoGeo = new THREE.BoxGeometry(objeto.ancho, objeto.alto, objeto.profundidad);
+            const marcoMat = texturaMadera(objeto.colorMarco);
+            const marco = new THREE.Mesh(marcoGeo, marcoMat);
+            marco.position.y = objeto.alto / 2;
+            marco.castShadow = true;
+            marco.receiveShadow = true;
+            grupo.add(marco);
+            
+            const vidrioGeo = new THREE.BoxGeometry(objeto.ancho * 0.9, objeto.alto * 0.9, 0.05);
+            const vidrioMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorVidrio, 
+                transparent: true, 
+                opacity: 0.6, 
+                roughness: 0.1, 
+                metalness: 0.9,
+                emissive: new THREE.Color(0x112233),
+                emissiveIntensity: 0.2
+            });
+            const vidrio = new THREE.Mesh(vidrioGeo, vidrioMat);
+            vidrio.position.set(0, objeto.alto / 2, objeto.profundidad / 2 + 0.06);
+            vidrio.castShadow = true;
+            vidrio.receiveShadow = true;
+            grupo.add(vidrio);
+            
+            const divisorVGeo = new THREE.BoxGeometry(0.05, objeto.alto * 0.9, 0.04);
+            const divisorMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorDetalles, 
+                roughness: 0.4, 
+                metalness: 0.8,
+                emissive: new THREE.Color(0x442200),
+                emissiveIntensity: 0.2
+            });
+            
+            const divisor1 = new THREE.Mesh(divisorVGeo, divisorMat);
+            divisor1.position.set(-objeto.ancho * 0.225, objeto.alto / 2, 0.12);
+            divisor1.castShadow = true;
+            grupo.add(divisor1);
+            
+            const divisor2 = new THREE.Mesh(divisorVGeo, divisorMat);
+            divisor2.position.set(objeto.ancho * 0.225, objeto.alto / 2, 0.12);
+            divisor2.castShadow = true;
+            grupo.add(divisor2);
+            
+            const arcoGeo = new THREE.TorusGeometry(objeto.ancho * 0.125, 0.04, 16, 32, Math.PI);
+            const arcoMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorDetalles, 
+                roughness: 0.4, 
+                metalness: 0.8,
+                emissive: new THREE.Color(0x442200),
+                emissiveIntensity: 0.2
+            });
+            const arco = new THREE.Mesh(arcoGeo, arcoMat);
+            arco.rotation.x = Math.PI / 2;
+            arco.rotation.z = Math.PI;
+            arco.position.set(0, objeto.alto * 0.9, 0.12);
+            arco.scale.set(1.2, 1, 1);
+            arco.castShadow = true;
+            grupo.add(arco);
+            
+            const baseGeo = new THREE.BoxGeometry(objeto.ancho * 0.9, 0.1, 0.04);
+            const baseMat = texturaMadera(objeto.colorMarco);
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.set(0, 0.05, 0.12);
+            base.castShadow = true;
+            grupo.add(base);
+            
+            const plataformaGeo = new THREE.BoxGeometry(objeto.ancho * 1.5, 0.05, objeto.profundidad * 2);
+            const plataformaMat = new THREE.MeshStandardMaterial({ 
+                color: "#5D4037", 
+                roughness: 0.9,
+                emissive: new THREE.Color(0x221100),
+                emissiveIntensity: 0.1
+            });
+            const plataforma = new THREE.Mesh(plataformaGeo, plataformaMat);
+            plataforma.position.set(0, -0.05, 0);
+            plataforma.receiveShadow = true;
+            plataforma.castShadow = true;
+            grupo.add(plataforma);
+            
+            return grupo;
+        }
+        
+        function crearPuerta(objeto) {
+            const grupo = new THREE.Group();
+            
+            const maderaMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorMadera, 
+                roughness: 0.7, 
+                metalness: 0.1,
+                emissive: new THREE.Color(0x221100),
+                emissiveIntensity: 0.1
+            });
+            
+            const marcoGeo = new THREE.BoxGeometry(objeto.ancho, objeto.alto, objeto.profundidad);
+            const marco = new THREE.Mesh(marcoGeo, maderaMat);
+            marco.position.y = objeto.alto / 2;
+            marco.castShadow = true;
+            marco.receiveShadow = true;
+            grupo.add(marco);
+            
+            const panelGeo = new THREE.BoxGeometry(objeto.ancho * 0.8, objeto.alto * 0.25, 0.04);
+            const panelMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorDetalles, 
+                roughness: 0.8,
+                emissive: new THREE.Color(0x332211),
+                emissiveIntensity: 0.1
+            });
+            
+            for (let i = 0; i < 3; i++) {
+                const panel = new THREE.Mesh(panelGeo, panelMat);
+                panel.position.set(0, objeto.alto * (0.7 - i * 0.3), 0.06);
+                panel.castShadow = true;
+                grupo.add(panel);
+            }
+            
+            const manijaGeo = new THREE.SphereGeometry(0.04, 16, 16);
+            const manijaMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorMetal, 
+                metalness: 0.9, 
+                roughness: 0.2,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.3
+            });
+            const manija = new THREE.Mesh(manijaGeo, manijaMat);
+            manija.position.set(objeto.ancho * 0.35, objeto.alto / 2, 0.08);
+            manija.castShadow = true;
+            grupo.add(manija);
+            
+            const marcoExtGeo = new THREE.BoxGeometry(objeto.ancho * 1.1, objeto.alto * 1.05, 0.08);
+            const marcoExtMat = new THREE.MeshStandardMaterial({ 
+                color: "#5D4037", 
+                roughness: 0.9,
+                emissive: new THREE.Color(0x221100),
+                emissiveIntensity: 0.1
+            });
+            const marcoExt = new THREE.Mesh(marcoExtGeo, marcoExtMat);
+            marcoExt.position.set(0, objeto.alto / 2, -0.05);
+            marcoExt.castShadow = true;
+            marcoExt.receiveShadow = true;
+            grupo.add(marcoExt);
+            
+            const dintelGeo = new THREE.BoxGeometry(objeto.ancho * 1.2, 0.15, 0.2);
+            const dintelMat = new THREE.MeshStandardMaterial({ 
+                color: "#5D4037", 
+                roughness: 0.9,
+                emissive: new THREE.Color(0x221100),
+                emissiveIntensity: 0.1
+            });
+            const dintel = new THREE.Mesh(dintelGeo, dintelMat);
+            dintel.position.set(0, objeto.alto + 0.1, 0);
+            dintel.castShadow = true;
+            dintel.receiveShadow = true;
+            grupo.add(dintel);
+            
+            return grupo;
+        }
+        
+        function crearColumna(objeto) {
+            const grupo = new THREE.Group();
+            
+            const baseGeo = new THREE.CylinderGeometry(objeto.ancho * 0.6, objeto.ancho * 0.6, 0.4, 16);
+            const baseMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorBase, 
+                roughness: 0.6,
+                emissive: new THREE.Color(0x222222),
+                emissiveIntensity: 0.1
+            });
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.y = 0.2;
+            base.castShadow = true;
+            base.receiveShadow = true;
+            grupo.add(base);
+            
+            const fusteGeo = new THREE.CylinderGeometry(objeto.ancho * 0.35, objeto.ancho * 0.35, objeto.alto * 0.8, 20);
+            const fusteMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorMarmol, 
+                roughness: 0.4, 
+                metalness: 0.3,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const fuste = new THREE.Mesh(fusteGeo, fusteMat);
+            fuste.position.y = objeto.alto * 0.5;
+            fuste.castShadow = true;
+            fuste.receiveShadow = true;
+            grupo.add(fuste);
+            
+            const capitelBaseGeo = new THREE.CylinderGeometry(objeto.ancho * 0.45, objeto.ancho * 0.45, 0.4, 24);
+            const capitelBaseMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorDetalles, 
+                roughness: 0.5,
+                emissive: new THREE.Color(0x444444),
+                emissiveIntensity: 0.2
+            });
+            const capitelBase = new THREE.Mesh(capitelBaseGeo, capitelBaseMat);
+            capitelBase.position.y = objeto.alto * 0.9 + 0.2;
+            capitelBase.castShadow = true;
+            grupo.add(capitelBase);
+            
+            const capitelSupGeo = new THREE.ConeGeometry(objeto.ancho * 0.4, 0.3, 8);
+            const capitelSupMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorDetalles, 
+                roughness: 0.5,
+                emissive: new THREE.Color(0x444444),
+                emissiveIntensity: 0.2
+            });
+            const capitelSup = new THREE.Mesh(capitelSupGeo, capitelSupMat);
+            capitelSup.position.y = objeto.alto * 0.9 + 0.5;
+            capitelSup.castShadow = true;
+            grupo.add(capitelSup);
+            
+            const decoracionMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorMarmol, 
+                roughness: 0.5,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            
+            for (let i = 0; i < 4; i++) {
+                const angulo = (i * Math.PI / 2);
+                const x = Math.cos(angulo) * objeto.ancho * 0.3;
+                const z = Math.sin(angulo) * objeto.ancho * 0.3;
+                
+                const volutaGeo = new THREE.TorusGeometry(0.1, 0.03, 8, 16, Math.PI);
+                const volutaMat = new THREE.MeshStandardMaterial({ color: objeto.colorMarmol, emissive: new THREE.Color(0x333333), emissiveIntensity: 0.1 });
+                const voluta = new THREE.Mesh(volutaGeo, volutaMat);
+                voluta.position.set(x, objeto.alto * 0.9 + 0.3, z);
+                voluta.rotation.y = angulo;
+                voluta.rotation.x = Math.PI / 2;
+                voluta.castShadow = true;
+                grupo.add(voluta);
+            }
+            
+            return grupo;
+        }
+        
+        function crearEscalera(objeto) {
+            const grupo = new THREE.Group();
+            
+            const baseGeo = new THREE.CylinderGeometry(objeto.ancho/2, objeto.ancho/2, 0.2, 16);
+            const baseMat = new THREE.MeshStandardMaterial({ 
+                color: "#5D4037", 
+                roughness: 0.9,
+                emissive: new THREE.Color(0x221100),
+                emissiveIntensity: 0.1
+            });
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.y = 0.1;
+            base.receiveShadow = true;
+            base.castShadow = true;
+            grupo.add(base);
+            
+            const columnaGeo = new THREE.CylinderGeometry(0.1, 0.1, objeto.alto, 8);
+            const columnaMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorMetal, 
+                metalness: 0.8, 
+                roughness: 0.3,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.2
+            });
+            const columna = new THREE.Mesh(columnaGeo, columnaMat);
+            columna.position.y = objeto.alto / 2;
+            columna.castShadow = true;
+            grupo.add(columna);
+            
+            const numPeldaños = 12;
+            const alturaPorPeldaño = objeto.alto / numPeldaños;
+            
+            for (let i = 0; i < numPeldaños; i++) {
+                const y = i * alturaPorPeldaño + alturaPorPeldaño/2;
+                const angulo = i * (Math.PI * 2 / numPeldaños);
+                const radio = objeto.ancho/2 - 0.2;
+                const x = Math.cos(angulo) * radio;
+                const z = Math.sin(angulo) * radio;
+                
+                const peldañoGeo = new THREE.BoxGeometry(0.6, 0.05, 0.2);
+                const peldañoMat = new THREE.MeshStandardMaterial({ 
+                    color: objeto.colorMadera, 
+                    roughness: 0.8,
+                    emissive: new THREE.Color(0x332211),
+                    emissiveIntensity: 0.1
+                });
+                const peldaño = new THREE.Mesh(peldañoGeo, peldañoMat);
+                peldaño.position.set(x, y, z);
+                peldaño.rotation.y = -angulo;
+                peldaño.castShadow = true;
+                peldaño.receiveShadow = true;
+                grupo.add(peldaño);
+            }
+            
+            return grupo;
+        }
+        
+        function crearArco(objeto) {
+            const grupo = new THREE.Group();
+            
+            const piedraMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorPiedra, 
+                roughness: 0.7,
+                emissive: new THREE.Color(0x222222),
+                emissiveIntensity: 0.1
+            });
+            
+            const baseGeo = new THREE.BoxGeometry(objeto.ancho, 0.2, objeto.profundidad);
+            const base = new THREE.Mesh(baseGeo, piedraMat);
+            base.position.y = 0.1;
+            base.castShadow = true;
+            base.receiveShadow = true;
+            grupo.add(base);
+            
+            const columnaGeo = new THREE.CylinderGeometry(0.2, 0.2, objeto.alto * 0.8, 8);
+            
+            const columnaIzq = new THREE.Mesh(columnaGeo, piedraMat);
+            columnaIzq.position.set(-objeto.ancho * 0.35, objeto.alto * 0.4, 0);
+            columnaIzq.castShadow = true;
+            columnaIzq.receiveShadow = true;
+            grupo.add(columnaIzq);
+            
+            const columnaDer = new THREE.Mesh(columnaGeo, piedraMat);
+            columnaDer.position.set(objeto.ancho * 0.35, objeto.alto * 0.4, 0);
+            columnaDer.castShadow = true;
+            columnaDer.receiveShadow = true;
+            grupo.add(columnaDer);
+            
+            const arcoGeo = new THREE.TorusGeometry(objeto.ancho * 0.25, 0.15, 8, 24, Math.PI);
+            const arcoMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorPiedra, 
+                roughness: 0.6,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const arco = new THREE.Mesh(arcoGeo, arcoMat);
+            arco.rotation.x = Math.PI / 2;
+            arco.rotation.z = Math.PI / 2;
+            arco.position.set(0, objeto.alto * 0.8, 0);
+            arco.castShadow = true;
+            grupo.add(arco);
+            
+            const dintelGeo = new THREE.BoxGeometry(objeto.ancho, 0.3, objeto.profundidad * 0.8);
+            const dintelMat = new THREE.MeshStandardMaterial({ 
+                color: objeto.colorDetalles, 
+                roughness: 0.7,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const dintel = new THREE.Mesh(dintelGeo, dintelMat);
+            dintel.position.set(0, objeto.alto * 1.1, 0);
+            dintel.castShadow = true;
+            dintel.receiveShadow = true;
+            grupo.add(dintel);
+            
+            return grupo;
         }
 
-        function obtenerHTML3DParaObjeto(objeto) {
-            let html = '';
-            
+        function crearObjeto3D(objeto) {
             switch(objeto.tipo) {
+                case 'ventana': return crearVentana(objeto);
+                case 'puerta': return crearPuerta(objeto);
+                case 'columna': return crearColumna(objeto);
+                case 'escalera': return crearEscalera(objeto);
+                case 'arco': return crearArco(objeto);
+                default: return crearVentana(objeto);
+            }
+        }
+
+        // ============================================
+        // FUNCIONES PARA CREAR PLANOS 2D (FASE 3)
+        // ============================================
+        
+        function crearTexturaPlano(objeto, color, forma) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#CCCCCC';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+            
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#333333';
+            ctx.lineWidth = 8;
+            
+            const centroX = canvas.width / 2;
+            const centroY = canvas.height / 2;
+            
+            switch(forma) {
                 case 'ventana':
-                    html = `
-                        <a-box position="0 ${objeto.alto/2} 0" 
-                               width="${objeto.ancho}" 
-                               height="${objeto.alto}" 
-                               depth="${objeto.profundidad}" 
-                               color="${objeto.colorMarco}"
-                               roughness="0.7"
-                               metalness="0.3">
-                            <a-box position="0 0 0.06" 
-                                   width="${objeto.ancho * 0.9}" 
-                                   height="${objeto.alto * 0.9}" 
-                                   depth="0.05" 
-                                   color="${objeto.colorVidrio}" 
-                                   opacity="0.7"
-                                   roughness="0.1"
-                                   metalness="0.9"></a-box>
-                            <a-box position="${objeto.ancho * -0.225} 0 0.07" 
-                                   width="0.05" 
-                                   height="${objeto.alto * 0.9}" 
-                                   depth="0.04" 
-                                   color="${objeto.colorDetalles}"
-                                   roughness="0.6"></a-box>
-                            <a-box position="${objeto.ancho * 0.225} 0 0.07" 
-                                   width="0.05" 
-                                   height="${objeto.alto * 0.9}" 
-                                   depth="0.04" 
-                                   color="${objeto.colorDetalles}"
-                                   roughness="0.6"></a-box>
-                            <a-cylinder position="0 ${objeto.alto * 0.45} 0.07" 
-                                       height="0.04" 
-                                       radius="${objeto.ancho * 0.125}" 
-                                       color="${objeto.colorDetalles}"
-                                       rotation="90 0 0"
-                                       open-ended="true"
-                                       theta-length="180"
-                                       roughness="0.6"></a-cylinder>
-                            <a-box position="0 ${objeto.alto * -0.45} 0.07" 
-                                   width="${objeto.ancho * 0.9}" 
-                                   height="0.1" 
-                                   depth="0.04" 
-                                   color="${objeto.colorMarco}"
-                                   roughness="0.8"></a-box>
-                        </a-box>
-                        <a-box position="0 ${objeto.alto * -0.55} 0.1" 
-                               width="${objeto.ancho * 1.2}" 
-                               height="0.05" 
-                               depth="0.15" 
-                               color="#5D4037"
-                               roughness="0.9"></a-box>
-                    `;
+                    ctx.fillStyle = '#8B4513';
+                    ctx.fillRect(centroX - 150, centroY - 200, 300, 400);
+                    
+                    ctx.fillStyle = '#87CEEB';
+                    ctx.globalAlpha = 0.6;
+                    ctx.fillRect(centroX - 130, centroY - 180, 260, 360);
+                    
+                    ctx.globalAlpha = 1.0;
+                    ctx.strokeStyle = '#DAA520';
+                    ctx.lineWidth = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(centroX, centroY - 180);
+                    ctx.lineTo(centroX, centroY + 180);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(centroX - 130, centroY);
+                    ctx.lineTo(centroX + 130, centroY);
+                    ctx.stroke();
+                    
+                    ctx.strokeStyle = '#DAA520';
+                    ctx.lineWidth = 12;
+                    ctx.beginPath();
+                    ctx.arc(centroX, centroY - 180, 100, 0, Math.PI);
+                    ctx.stroke();
                     break;
                     
                 case 'puerta':
-                    html = `
-                        <a-box position="0 ${objeto.alto/2} 0" 
-                               width="${objeto.ancho}" 
-                               height="${objeto.alto}" 
-                               depth="${objeto.profundidad}" 
-                               color="${objeto.colorMadera}"
-                               roughness="0.8"
-                               metalness="0.2">
-                            <a-box position="0 ${objeto.alto * 0.3} 0.06" 
-                                   width="${objeto.ancho * 0.8}" 
-                                   height="${objeto.alto * 0.25}" 
-                                   depth="0.04" 
-                                   color="${objeto.colorDetalles}"
-                                   roughness="0.9"></a-box>
-                            <a-box position="0 ${objeto.alto * -0.1} 0.06" 
-                                   width="${objeto.ancho * 0.8}" 
-                                   height="${objeto.alto * 0.25}" 
-                                   depth="0.04" 
-                                   color="${objeto.colorDetalles}"
-                                   roughness="0.9"></a-box>
-                            <a-cylinder position="${objeto.ancho * 0.35} 0 0.08" 
-                                       radius="0.04" 
-                                       height="0.02" 
-                                       color="${objeto.colorMetal}"
-                                       metalness="0.9"
-                                       roughness="0.2"></a-cylinder>
-                            <a-torus position="${objeto.ancho * 0.4} 0 0.08" 
-                                    radius="0.03" 
-                                    radius-tubular="0.008" 
-                                    color="${objeto.colorMetal}"
-                                    metalness="0.9"
-                                    arc="180"
-                                    rotation="0 90 0"></a-torus>
-                        </a-box>
-                        <a-box position="0 ${objeto.alto/2} ${objeto.profundidad * -0.6}" 
-                               width="${objeto.ancho * 1.1}" 
-                               height="${objeto.alto * 1.05}" 
-                               depth="0.08" 
-                               color="#5D4037"
-                               roughness="0.9"></a-box>
-                        <a-box position="0 ${objeto.alto + 0.1} 0" 
-                               width="${objeto.ancho * 1.2}" 
-                               height="0.15" 
-                               depth="0.2" 
-                               color="#5D4037"
-                               roughness="0.9"></a-box>
-                    `;
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(centroX - 100, centroY - 200, 200, 400);
+                    
+                    ctx.fillStyle = '#8B7355';
+                    ctx.fillRect(centroX - 70, centroY - 150, 140, 80);
+                    ctx.fillRect(centroX - 70, centroY - 50, 140, 80);
+                    ctx.fillRect(centroX - 70, centroY + 50, 140, 80);
+                    
+                    ctx.fillStyle = '#C0C0C0';
+                    ctx.beginPath();
+                    ctx.arc(centroX + 60, centroY, 15, 0, 2 * Math.PI);
+                    ctx.fill();
                     break;
                     
                 case 'columna':
-                    html = `
-                        <a-cylinder position="0 0.2 0" 
-                                   radius="${objeto.ancho * 0.6}" 
-                                   height="0.4" 
-                                   color="${objeto.colorBase}"
-                                   roughness="0.7"
-                                   segments-radial="16"></a-cylinder>
-                        <a-cylinder position="0 ${objeto.alto * 0.5} 0" 
-                                   radius="${objeto.ancho * 0.35}" 
-                                   height="${objeto.alto * 0.8}" 
-                                   color="${objeto.colorMarmol}"
-                                   roughness="0.5"
-                                   metalness="0.3"
-                                   segments-radial="20">
-                            <a-entity position="0 0 0" rotation="0 0 0">
-                                ${generarEstriasColumna(objeto)}
-                            </a-entity>
-                        </a-cylinder>
-                        <a-entity position="0 ${objeto.alto * 0.9} 0">
-                            <a-cylinder position="0 0.2 0" 
-                                       radius="${objeto.ancho * 0.45}" 
-                                       height="0.4" 
-                                       color="${objeto.colorDetalles}"
-                                       roughness="0.6"
-                                       segments-radial="24"></a-cylinder>
-                            <a-cone position="0 0.4 0" 
-                                   radius-bottom="${objeto.ancho * 0.4}" 
-                                   radius-top="${objeto.ancho * 0.3}" 
-                                   height="0.3" 
-                                   color="${objeto.colorDetalles}"
-                                   roughness="0.7"
-                                   segments-radial="8"></a-cone>
-                            <a-torus position="${objeto.ancho * 0.25} 0.5 ${objeto.ancho * 0.25}" 
-                                    radius="0.15" 
-                                    radius-tubular="0.03" 
-                                    color="${objeto.colorMarmol}"
-                                    rotation="0 45 0"></a-torus>
-                            <a-torus position="${objeto.ancho * -0.25} 0.5 ${objeto.ancho * 0.25}" 
-                                    radius="0.15" 
-                                    radius-tubular="0.03" 
-                                    color="${objeto.colorMarmol}"
-                                    rotation="0 -45 0"></a-torus>
-                        </a-entity>
-                    `;
+                    ctx.fillStyle = '#A9A9A9';
+                    ctx.beginPath();
+                    ctx.arc(centroX, centroY, 150, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#E8E8E8';
+                    ctx.beginPath();
+                    ctx.arc(centroX, centroY, 100, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = '#D3D3D3';
+                    ctx.lineWidth = 10;
+                    ctx.beginPath();
+                    ctx.arc(centroX, centroY, 120, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.arc(centroX, centroY, 80, 0, 2 * Math.PI);
+                    ctx.stroke();
                     break;
                     
                 case 'escalera':
-                    html = `
-                        <a-entity position="0 ${objeto.alto/2} 0">
-                            <a-cylinder position="0 ${-objeto.alto/2 + 0.1} 0" 
-                                       radius="${objeto.ancho/2}" 
-                                       height="0.2" 
-                                       color="#5D4037"
-                                       roughness="0.9"></a-cylinder>
-                            <a-cylinder position="0 ${objeto.alto * 0.1} 0" 
-                                       radius="0.1" 
-                                       height="${objeto.alto}" 
-                                       color="${objeto.colorMetal}"
-                                       metalness="0.8"
-                                       roughness="0.3"></a-cylinder>
-                            ${generarPeldañosEspiral(objeto)}
-                            <a-torus position="0 ${objeto.alto * 0.5} 0" 
-                                    radius="${objeto.ancho/2 - 0.1}" 
-                                    radius-tubular="0.02" 
-                                    color="${objeto.colorMetal}"
-                                    metalness="0.8"
-                                    arc="360"
-                                    segments-radial="64"
-                                    segments-tubular="12"></a-torus>
-                            ${generarBarrotesBaranda(objeto)}
-                        </a-entity>
-                    `;
+                    for (let i = 0; i < 8; i++) {
+                        const angulo = (i / 8) * Math.PI * 2;
+                        const radio = 50 + i * 30;
+                        const x = centroX + Math.cos(angulo) * radio;
+                        const y = centroY + Math.sin(angulo) * radio;
+                        
+                        ctx.fillStyle = i % 2 === 0 ? '#708090' : '#DEB887';
+                        ctx.beginPath();
+                        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                    
+                    ctx.strokeStyle = '#8B7355';
+                    ctx.lineWidth = 6;
+                    for (let i = 1; i <= 3; i++) {
+                        ctx.beginPath();
+                        ctx.arc(centroX, centroY, i * 60, 0, 2 * Math.PI);
+                        ctx.stroke();
+                    }
                     break;
                     
                 case 'arco':
-                    html = `
-                        <a-box position="0 ${objeto.alto * 0.1} 0" 
-                               width="${objeto.ancho}" 
-                               height="0.2" 
-                               depth="${objeto.profundidad}" 
-                               color="${objeto.colorPiedra}"
-                               roughness="0.8"></a-box>
-                        <a-cylinder position="${objeto.ancho * -0.35} ${objeto.alto * 0.6} 0" 
-                                   radius="0.2" 
-                                   height="${objeto.alto * 0.8}" 
-                                   color="${objeto.colorPiedra}"
-                                   roughness="0.7"
-                                   segments-radial="16"></a-cylinder>
-                        <a-cylinder position="${objeto.ancho * 0.35} ${objeto.alto * 0.6} 0" 
-                                   radius="0.2" 
-                                   height="${objeto.alto * 0.8}" 
-                                   color="${objeto.colorPiedra}"
-                                   roughness="0.7"
-                                   segments-radial="16"></a-cylinder>
-                        <a-torus position="0 ${objeto.alto * 0.8} 0" 
-                                radius="${objeto.ancho * 0.25}" 
-                                radius-tubular="0.15" 
-                                color="${objeto.colorPiedra}"
-                                arc="180"
-                                rotation="0 0 90"
-                                roughness="0.7"></a-torus>
-                        <a-box position="0 ${objeto.alto * 1.1} 0" 
-                               width="${objeto.ancho}" 
-                               height="0.3" 
-                               depth="${objeto.profundidad * 0.8}" 
-                               color="${objeto.colorDetalles}"
-                               roughness="0.8"></a-box>
-                        <a-box position="${objeto.ancho * -0.35} ${objeto.alto * 1.3} 0" 
-                               width="0.15" 
-                               height="0.4" 
-                               depth="0.1" 
-                               color="${objeto.colorRelieve}"
-                               roughness="0.9"></a-box>
-                        <a-box position="${objeto.ancho * 0.35} ${objeto.alto * 1.3} 0" 
-                               width="0.15" 
-                               height="0.4" 
-                               depth="0.1" 
-                               color="${objeto.colorRelieve}"
-                               roughness="0.9"></a-box>
-                        <a-box position="0 ${objeto.alto * 0.5} 0" 
-                               width="${objeto.ancho * 0.4}" 
-                               height="${objeto.alto * 0.6}" 
-                               depth="0.05" 
-                               color="#87CEEB"
-                               opacity="0.6"
-                               roughness="0.1"
-                               metalness="0.9"></a-box>
-                    `;
+                    ctx.fillStyle = '#B8B8B8';
+                    ctx.fillRect(centroX - 150, centroY - 150, 50, 300);
+                    ctx.fillRect(centroX + 100, centroY - 150, 50, 300);
+                    
+                    ctx.strokeStyle = '#808080';
+                    ctx.lineWidth = 20;
+                    ctx.beginPath();
+                    ctx.arc(centroX, centroY - 50, 150, 0, Math.PI);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#989898';
+                    ctx.fillRect(centroX - 180, centroY - 200, 360, 30);
                     break;
+                    
+                default:
+                    ctx.fillStyle = '#00BCD4';
+                    ctx.font = 'bold 40px Arial';
+                    ctx.fillStyle = '#333333';
+                    ctx.fillText('PLANO 2D', centroX - 100, centroY);
             }
             
-            return html;
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        function crearPlanoVentana(objeto) {
+            const grupo = new THREE.Group();
+            const textura = crearTexturaPlano(objeto, objeto.colorMarco, 'ventana');
+            
+            const geometry = new THREE.PlaneGeometry(2.0, 2.0);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: textura,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const plano = new THREE.Mesh(geometry, material);
+            plano.rotation.x = -Math.PI / 2;
+            plano.position.y = 0;
+            plano.receiveShadow = true;
+            
+            grupo.add(plano);
+            return grupo;
+        }
+        
+        function crearPlanoPuerta(objeto) {
+            const grupo = new THREE.Group();
+            const textura = crearTexturaPlano(objeto, objeto.colorMadera, 'puerta');
+            
+            const geometry = new THREE.PlaneGeometry(2.0, 2.0);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: textura,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const plano = new THREE.Mesh(geometry, material);
+            plano.rotation.x = -Math.PI / 2;
+            plano.position.y = 0;
+            
+            grupo.add(plano);
+            return grupo;
+        }
+        
+        function crearPlanoColumna(objeto) {
+            const grupo = new THREE.Group();
+            const textura = crearTexturaPlano(objeto, objeto.colorMarmol, 'columna');
+            
+            const geometry = new THREE.PlaneGeometry(2.0, 2.0);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: textura,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const plano = new THREE.Mesh(geometry, material);
+            plano.rotation.x = -Math.PI / 2;
+            plano.position.y = 0;
+            
+            grupo.add(plano);
+            return grupo;
+        }
+        
+        function crearPlanoEscalera(objeto) {
+            const grupo = new THREE.Group();
+            const textura = crearTexturaPlano(objeto, objeto.colorMadera, 'escalera');
+            
+            const geometry = new THREE.PlaneGeometry(2.0, 2.0);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: textura,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const plano = new THREE.Mesh(geometry, material);
+            plano.rotation.x = -Math.PI / 2;
+            plano.position.y = 0;
+            
+            grupo.add(plano);
+            return grupo;
+        }
+        
+        function crearPlanoArco(objeto) {
+            const grupo = new THREE.Group();
+            const textura = crearTexturaPlano(objeto, objeto.colorPiedra, 'arco');
+            
+            const geometry = new THREE.PlaneGeometry(2.0, 2.0);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: textura,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x333333),
+                emissiveIntensity: 0.1
+            });
+            const plano = new THREE.Mesh(geometry, material);
+            plano.rotation.x = -Math.PI / 2;
+            plano.position.y = 0;
+            
+            grupo.add(plano);
+            return grupo;
         }
 
-        function generarEstriasColumna(objeto) {
-            let html = '';
-            const numEstrias = 20;
-            const angulo = 360 / numEstrias;
-            
-            for (let i = 0; i < numEstrias; i++) {
-                const rotation = i * angulo;
-                const x = Math.cos(rotation * Math.PI / 180) * objeto.ancho * 0.33;
-                const z = Math.sin(rotation * Math.PI / 180) * objeto.ancho * 0.33;
-                
-                html += `
-                    <a-box position="${x} 0 ${z}" 
-                           width="0.03" 
-                           height="${objeto.alto * 0.8}" 
-                           depth="0.05" 
-                           color="${objeto.colorDetalles}"
-                           rotation="0 ${rotation} 0"
-                           roughness="0.6"></a-box>
-                `;
+        function crearPlano2D(objeto) {
+            switch(objeto.tipo) {
+                case 'ventana': return crearPlanoVentana(objeto);
+                case 'puerta': return crearPlanoPuerta(objeto);
+                case 'columna': return crearPlanoColumna(objeto);
+                case 'escalera': return crearPlanoEscalera(objeto);
+                case 'arco': return crearPlanoArco(objeto);
+                default: return crearPlanoVentana(objeto);
             }
-            
-            return html;
-        }
-
-        function generarPeldañosEspiral(objeto) {
-            let html = '';
-            const numPeldaños = 12;
-            const alturaPorPeldaño = objeto.alto / numPeldaños;
-            const anguloPorPeldaño = 360 / numPeldaños;
-            
-            for (let i = 0; i < numPeldaños; i++) {
-                const y = -objeto.alto/2 + (i * alturaPorPeldaño) + alturaPorPeldaño/2;
-                const rotation = i * anguloPorPeldaño;
-                const x = Math.cos(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.2);
-                const z = Math.sin(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.2);
-                
-                html += `
-                    <a-box position="${x} ${y} ${z}" 
-                           width="0.6" 
-                           height="0.05" 
-                           depth="0.2" 
-                           color="${objeto.colorMadera}"
-                           rotation="0 ${-rotation} 0"
-                           roughness="0.8"></a-box>
-                `;
-            }
-            
-            return html;
-        }
-
-        function generarBarrotesBaranda(objeto) {
-            let html = '';
-            const numBarrotes = 12;
-            const anguloPorBarrote = 360 / numBarrotes;
-            
-            for (let i = 0; i < numBarrotes; i++) {
-                const rotation = i * anguloPorBarrote;
-                const x = Math.cos(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.1);
-                const z = Math.sin(rotation * Math.PI / 180) * (objeto.ancho/2 - 0.1);
-                
-                html += `
-                    <a-cylinder position="${x} ${objeto.alto * 0.5} ${z}" 
-                               radius="0.01" 
-                               height="${objeto.alto * 0.6}" 
-                               color="${objeto.colorMetal}"
-                               metalness="0.8"
-                               rotation="0 ${rotation} 0"></a-cylinder>
-                `;
-            }
-            
-            return html;
-        }
-
-        function obtenerHTML2DParaObjeto(objeto) {
-            return `
-                <div style="width: 300px; height: 200px; background: #E8F4FD; position: relative; border: 3px solid #1976D2; border-radius: 10px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                    <div style="background: #1976D2; color: white; padding: 8px; text-align: center; font-weight: bold; border-radius: 7px 7px 0 0;">
-                        PLANO DE PLANTA - ${objeto.nombre.toUpperCase()}
-                    </div>
-                    <div style="padding: 15px; height: calc(100% - 40px); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <div style="margin-bottom: 10px; transform: scale(1.2);">
-                            ${objeto.plantaHTML}
-                        </div>
-                        <div style="margin-top: 15px; text-align: center; color: #333; font-size: 12px; background: rgba(255, 255, 255, 0.8); padding: 8px; border-radius: 5px; border: 1px solid #BBDEFB; width: 90%;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-                                <span><strong>Escala:</strong> 1:50</span>
-                                <span><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</span>
-                            </div>
-                            <div style="border-top: 1px dashed #90CAF9; padding-top: 5px; margin-top: 5px;">
-                                <strong>Descripción:</strong> ${objeto.plantaDescripcion}
-                            </div>
-                        </div>
-                        <div style="position: absolute; bottom: 10px; right: 10px; width: 30px; height: 30px; border: 2px solid #1976D2; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white;">
-                            <span style="color: #1976D2; font-weight: bold;">N</span>
-                        </div>
-                        <div style="position: absolute; bottom: 10px; left: 10px; font-size: 10px; color: #555; background: rgba(255, 255, 255, 0.9); padding: 5px; border-radius: 3px; border: 1px solid #E3F2FD;">
-                            <div><strong>Referencias:</strong></div>
-                            <div>▸ Línea continua: Contorno</div>
-                            <div>▸ Línea discontinua: Elementos ocultos</div>
-                        </div>
-                    </div>
-                </div>
-            `;
         }
 
         // ============================================
-        // FUNCIONES DE NAVEGACIÓN BÁSICAS
+        // FUNCIONES DE NAVEGACIÓN
         // ============================================
         
         function mostrarConceptualizacion() {
             document.getElementById('conceptual').style.display = 'none';
             document.getElementById('conceptualizacion').style.display = 'flex';
             document.getElementById('conceptualizacion').scrollTop = 0;
+            enviarLog('Ver conceptualización');
         }
         
-        // ============================================
-        // VOLVER AL INICIO - CORREGIDO
-        // ============================================
         function volverInicio() {
+            if (tiempoInicioFase) {
+                guardarTiempoFase(faseActual);
+            }
+            
             document.getElementById('conceptual').style.display = 'flex';
             document.getElementById('conceptualizacion').style.display = 'none';
             document.getElementById('resultados').style.display = 'none';
@@ -984,36 +1447,17 @@
             document.getElementById('panel-ia').classList.add('oculto');
             document.getElementById('indicador-ar').classList.add('oculto');
             document.getElementById('escena-ar').classList.add('oculto');
+            document.getElementById('contenedor-ar').classList.add('oculto');
             document.getElementById('escena-vr').classList.add('oculto');
+            document.getElementById('qr-visualizacion').style.display = 'none';
+            document.getElementById('distancia-info').classList.add('oculto');
             
-            // LIMPIEZA CRÍTICA PARA AR.js
-            // Eliminar completamente las escenas AR
-            const escenaAR = document.getElementById('escena-ar');
-            escenaAR.innerHTML = '';
+            const contenedorAR = document.getElementById('contenedor-ar');
+            contenedorAR.innerHTML = '';
             
-            // Limpiar escena VR
             const escenaVR = document.getElementById('escena-vr');
             escenaVR.innerHTML = '';
             
-            // Intentar detener la cámara si está activa
-            const videos = document.querySelectorAll('video');
-            videos.forEach(video => {
-                if (video.srcObject) {
-                    const tracks = video.srcObject.getTracks();
-                    tracks.forEach(track => track.stop());
-                    video.srcObject = null;
-                }
-            });
-            
-            // Eliminar cualquier canvas residual de AR.js
-            const canvases = document.querySelectorAll('canvas');
-            canvases.forEach(canvas => {
-                if (canvas.style.position === 'fixed' || canvas.id.includes('arjs')) {
-                    canvas.remove();
-                }
-            });
-            
-            // Restablecer variables
             puntaje = 0;
             faseActual = 0;
             marcadorDetectado = false;
@@ -1023,53 +1467,63 @@
             fase3Respondida = false;
             fase2Avanzada = false;
             fase3Avanzada = false;
+            tiemposPorFase = {0: 0, 1: 0, 2: 0};
+            tiempoInicioFase = null;
             
-            // Restablecer objetos
             objetoFase1 = null;
             objetoFase2 = null;
             objetoFase3 = null;
             
-            // Limpiar botón VR si existe
             const botonVR = document.querySelector('.vr-gafas-btn');
-            if (botonVR) {
-                botonVR.remove();
-                botonVR = null;
-            }
+            if (botonVR) botonVR.remove();
             
-            // Forzar recolección de basura (no directa, pero ayudamos)
-            if (window.gc) {
-                window.gc();
-            }
+            enviarLog('Volver al inicio');
         }
         
         function comenzarActividad() {
             document.getElementById('conceptual').style.display = 'none';
             document.getElementById('conceptualizacion').style.display = 'none';
             document.getElementById('resultados').style.display = 'none';
+            document.getElementById('qr-visualizacion').style.display = 'none';
             
             document.getElementById('barra-superior').classList.remove('oculto');
             document.getElementById('panel-ia').classList.remove('oculto');
             
-            // Inicializar controles de respuesta
             fase2Respondida = false;
             fase3Respondida = false;
             fase2Avanzada = false;
             fase3Avanzada = false;
+            puntaje = 0;
+            respuestasUsuario = [];
+            tiemposPorFase = {0: 0, 1: 0, 2: 0};
+            tiempoInicioFase = null;
             
-            // Seleccionar objetos aleatorios para cada fase
+            document.querySelector('#puntaje span').textContent = puntaje;
+            
             objetoFase1 = seleccionarObjetoAleatorio();
             objetoFase2 = seleccionarObjetoAleatorio();
             objetoFase3 = seleccionarObjetoAleatorio();
             
-            // Iniciar Fase 1
+            enviarLog('Iniciar actividad', 'general', null, null, 0, {
+                objetos: {
+                    fase1: objetoFase1.nombre,
+                    fase2: objetoFase2.nombre,
+                    fase3: objetoFase3.nombre
+                }
+            });
+            
             iniciarFase(0);
         }
         
         function reiniciar() {
+            enviarLog('Reiniciar actividad');
             volverInicio();
-            setTimeout(() => {
-                comenzarActividad();
-            }, 100);
+            setTimeout(() => comenzarActividad(), 100);
+        }
+
+        function seleccionarObjetoAleatorio() {
+            const indice = Math.floor(Math.random() * objetosArquitectonicos.length);
+            return objetosArquitectonicos[indice];
         }
 
         // ============================================
@@ -1078,7 +1532,6 @@
         let puntaje = 0;
         let faseActual = 0;
         let marcadorDetectado = false;
-        let escenaARActual = null;
         let respuestasUsuario = [];
         let modoVR = false;
         let botonVR = null;
@@ -1088,12 +1541,173 @@
         let fase2Avanzada = false;
         let fase3Avanzada = false;
         
+        let objetoFase1 = null;
+        let objetoFase2 = null;
+        let objetoFase3 = null;
+        
+        let mindarInstance = null;
+        let anchorDetectado = false;
+        let objetoActualAR = null;
+        let distanciaBase = 30;
+
+        let numeroSesion = Math.floor(Math.random() * 10000);
+        let modoIA = true;
+
+        // ============================================
+        // FUNCIÓN PARA DETENER MINDAR
+        // ============================================
+        async function detenerMindAR() {
+            if (mindarInstance) {
+                try {
+                    await mindarInstance.stop();
+                    mindarInstance = null;
+                } catch (e) {
+                    console.log('Error deteniendo MindAR:', e);
+                }
+            }
+            anchorDetectado = false;
+            objetoActualAR = null;
+        }
+
+        // ============================================
+        // FUNCIONES QR
+        // ============================================
+        
+        function mostrarQR() {
+            const qrDiv = document.getElementById('qr-visualizacion');
+            const canvas = document.getElementById('qr-canvas');
+            
+            QRCode.toCanvas(canvas, 'ARQUITECTO', { width: 200, margin: 2 }, function(error) {
+                if (error) console.error('Error generando QR:', error);
+                else {
+                    qrDiv.style.display = 'block';
+                    enviarLog('Ver QR', faseActual === 0 ? objetoFase1.nombre : objetoFase3.nombre);
+                }
+            });
+        }
+        
+        function cerrarQR() {
+            document.getElementById('qr-visualizacion').style.display = 'none';
+        }
+
+        window.mostrarQR = mostrarQR;
+        window.cerrarQR = cerrarQR;
+
+        // ============================================
+        // FUNCIÓN DE ESCALADO DINÁMICO
+        // ============================================
+        function actualizarEscalaPorDistancia(objetoMesh, distanciaEstimada) {
+            if (!objetoMesh) return;
+            
+            const distanciaCm = Math.max(10, Math.min(100, distanciaEstimada));
+            const factorEscala = 0.08 + (30 / distanciaCm) * 0.42;
+            const escalaFinal = Math.min(0.5, Math.max(0.08, factorEscala));
+            
+            objetoMesh.scale.set(escalaFinal, escalaFinal, escalaFinal);
+            document.getElementById('distancia-valor').textContent = Math.round(distanciaCm);
+        }
+
+        // ============================================
+        // IA: GENERAR RESPUESTA ÚNICA (SIN MODELO PESADO)
+        // ============================================
+        async function generarRespuestaUnica(contexto) {
+            const ahora = new Date();
+            const timestamp = ahora.toLocaleTimeString();
+            const idUnico = Math.floor(Math.random() * 10000);
+            
+            // Respuestas predefinidas pero con combinaciones aleatorias
+            const respuesta = generarRespuestaDinamica(contexto);
+            
+            document.getElementById('ia-verification').innerHTML = 
+                `🆔 Sesión: ${numeroSesion} | ⏱️ ${timestamp} | 🎲 ID: ${idUnico}`;
+            
+            return `${respuesta}\n\n---\n🆔 Sesión #${numeroSesion} | ⏱️ ${timestamp} | 🎲 ID: ${idUnico}`;
+        }
+
+        function generarRespuestaDinamica(contexto) {
+            const { tipo, objeto, esCorrecto, opcion, puntosGanados, fase } = contexto;
+            
+            // Arrays de frases para variar las respuestas
+            const saludos = ["Hola", "Bienvenido", "Qué tal", "Saludos", "Te damos la bienvenida"];
+            const felicitaciones = ["Excelente", "Muy bien", "Perfecto", "Buen trabajo", "Acertaste", "Correcto"];
+            const reconocimientos = ["Bien", "Correcto", "Acertaste", "Vas bien"];
+            const mejorables = ["Has acertado, pero puedes mejorar", "Correcto, aunque hay margen de mejora", "Bien, pero practica más"];
+            const consejos = ["Recuerda", "No olvides", "Ten en cuenta", "Considera", "Observa que"];
+            const errores = ["Casi", "Por poco", "No es correcto", "Observa con atención", "Revisa el concepto"];
+            
+            const saludo = saludos[Math.floor(Math.random() * saludos.length)];
+            const felicita = felicitaciones[Math.floor(Math.random() * felicitaciones.length)];
+            const reconoce = reconocimientos[Math.floor(Math.random() * reconocimientos.length)];
+            const mejora = mejorables[Math.floor(Math.random() * mejorables.length)];
+            const consejo = consejos[Math.floor(Math.random() * consejos.length)];
+            const error = errores[Math.floor(Math.random() * errores.length)];
+            
+            if (tipo === 'bienvenida') {
+                return `${saludo} a la Fase ${fase+1}. Trabajaremos con ${objeto.nombre}. ${objeto.caracteristicas} ${consejo} observar bien las proporciones y detalles arquitectónicos.`;
+            }
+            else if (tipo === 'validacion') {
+                if (esCorrecto) {
+                    if (puntosGanados === 30) {
+                        return `¡${felicita}! Obtuviste el máximo puntaje con ${objeto.nombre}. ${objeto.caracteristicas} Tu precisión es excelente. ¡Sigue así!`;
+                    } else if (puntosGanados === 20) {
+                        return `${reconoce} con ${objeto.nombre}. ${objeto.caracteristicas} Puedes mejorar la precisión para obtener máximo puntaje.`;
+                    } else {
+                        return `${mejora} con ${objeto.nombre}. ${objeto.caracteristicas} Observa mejor los detalles la próxima vez.`;
+                    }
+                } else {
+                    return `${error}. La opción "${opcion}" no es correcta para ${objeto.nombre}. ${objeto.caracteristicas} Intenta de nuevo con más atención.`;
+                }
+            }
+            else {
+                const actividades = [
+                    `Para seguir mejorando con ${objetoFase1?.nombre || 'objetos arquitectónicos'}: ${objetoFase1?.ejercicioComplementario || 'Practica dibujando diferentes vistas'}`,
+                    `Para reforzar con ${objetoFase2?.nombre || 'vistas superiores'}: ${objetoFase2?.ejercicioComplementario || 'Analiza las proporciones en edificios reales'}`,
+                    `Para conectar conceptos con ${objetoFase3?.nombre || 'proyecciones'}: ${objetoFase3?.ejercicioComplementario || 'Dibuja tus propias proyecciones 2D-3D'}`
+                ];
+                
+                const preguntas = [
+                    `¿Cómo crees que cambiaría la vista frontal del ${objetoFase1?.nombre} si modificaras su altura?`,
+                    `¿Qué relación encuentras entre la vista superior del ${objetoFase2?.nombre} y su función arquitectónica?`,
+                    `¿Por qué crees que es importante dominar las diferentes vistas en arquitectura?`,
+                    `¿Cómo aplicarías estos conceptos de vistas en el diseño de un edificio real?`
+                ];
+                
+                const pregunta = preguntas[Math.floor(Math.random() * preguntas.length)];
+                
+                return `Has completado la actividad con ${puntaje} puntos. 
+                
+                EVALUACIÓN: ${puntaje >= 80 ? 'Excelente dominio de vistas arquitectónicas' : puntaje >= 60 ? 'Buen desempeño, puedes seguir mejorando' : 'Necesitas practicar más los conceptos básicos'}.
+                
+                RECOMENDACIONES:
+                1. ${actividades[0]}
+                2. ${actividades[1]}
+                3. ${actividades[2]}
+                
+                PREGUNTA PARA REFLEXIONAR: ${pregunta}
+                
+                ¡Sigue practicando y verás cómo mejora tu comprensión espacial!`;
+            }
+        }
+
         // ============================================
         // INICIAR FASE
         // ============================================
-        function iniciarFase(numFase) {
+        async function iniciarFase(numFase) {
+            if (tiempoInicioFase) {
+                guardarTiempoFase(faseActual);
+            }
+            
             faseActual = numFase;
             marcadorDetectado = false;
+            iniciarTemporizadorFase(numFase);
+            
+            let objetoActual = '';
+            switch(numFase) {
+                case 0: objetoActual = objetoFase1.nombre; break;
+                case 1: objetoActual = objetoFase2.nombre; break;
+                case 2: objetoActual = objetoFase3.nombre; break;
+            }
+            enviarLog('Iniciar fase', objetoActual);
             
             if (botonVR) {
                 botonVR.remove();
@@ -1101,12 +1715,34 @@
             }
             modoVR = false;
             
+            await detenerMindAR();
+            
+            document.getElementById('escena-ar').classList.add('oculto');
+            document.getElementById('contenedor-ar').classList.add('oculto');
+            document.getElementById('escena-vr').classList.add('oculto');
+            document.getElementById('distancia-info').classList.add('oculto');
+            
+            const contenedorAR = document.getElementById('contenedor-ar');
+            contenedorAR.innerHTML = '';
+            
+            let objetoFase = null;
+            if (numFase === 0) objetoFase = objetoFase1;
+            else if (numFase === 1) objetoFase = objetoFase2;
+            else objetoFase = objetoFase3;
+            
+            const mensajeBienvenida = await generarRespuestaUnica({
+                tipo: 'bienvenida',
+                objeto: objetoFase,
+                fase: numFase
+            });
+            
             if (numFase === 0) {
-                // FASE 1: Vista Frontal en RA
                 document.getElementById('fase-actual').textContent = `Fase 1: Vista Frontal - ${objetoFase1.nombre}`;
+                
                 document.getElementById('mensaje-ia').innerHTML = 
-                    `<strong>FASE 1: VISTA FRONTAL - ${objetoFase1.nombre.toUpperCase()}</strong><br>` +
-                    `Escanea el marcador HIRO. Cuando veas el ${objetoFase1.nombre.toLowerCase()}, presiona el botón para validar la vista frontal.`;
+                    `<strong>🎓 TUTOR IA - FASE 1:</strong><br>` +
+                    `${mensajeBienvenida}<br>` +
+                    `<br><button class="btn" style="max-width: 200px; padding: 8px; margin-top: 10px;" onclick="mostrarQR()">🔍 VER QR</button>`;
                 
                 const contenedor = document.getElementById('contenedor-opciones');
                 contenedor.innerHTML = '';
@@ -1115,21 +1751,21 @@
                 boton.className = 'opcion-btn';
                 boton.textContent = `VALIDAR VISTA FRONTAL DEL ${objetoFase1.nombre.toUpperCase()}`;
                 boton.id = 'boton-validar';
-                
-                boton.onclick = function() {
-                    validarVistaFrontal();
-                };
-                
+                boton.onclick = validarVistaFrontal;
                 contenedor.appendChild(boton);
                 
-                configurarEscenaAR(false);
+                document.getElementById('indicador-ar').classList.remove('oculto');
+                document.getElementById('indicador-ar').innerHTML = '📱 Escanea el QR con la palabra "ARQUITECTO"';
+                document.getElementById('indicador-ar').style.background = 'linear-gradient(45deg, rgba(0, 122, 255, 0.95), rgba(0, 188, 212, 0.95))';
+                
+                configurarMindAR(false);
                 
             } else if (numFase === 1) {
-                // FASE 2: Vista Superior en RV
                 document.getElementById('fase-actual').textContent = `Fase 2: Vista Superior - ${objetoFase2.nombre}`;
+                
                 document.getElementById('mensaje-ia').innerHTML = 
-                    `<strong>FASE 2: VISTA SUPERIOR - ${objetoFase2.nombre.toUpperCase()}</strong><br>` +
-                    `Para ver la vista superior del ${objetoFase2.nombre.toLowerCase()}, ¿debes trasladarte o rotar el objeto?<br>` +
+                    `<strong>🎓 TUTOR IA - FASE 2:</strong><br>` +
+                    `${mensajeBienvenida}<br>` +
                     `<small style='color:#B0BEC5'>Usa las teclas WASD para moverte y el mouse para mirar alrededor</small>`;
                 
                 const contenedor = document.getElementById('contenedor-opciones');
@@ -1140,20 +1776,22 @@
                     const boton = document.createElement('button');
                     boton.className = 'opcion-btn';
                     boton.textContent = opcion;
-                    boton.onclick = function() {
-                        validarVistaSuperior(opcion);
-                    };
+                    boton.onclick = () => validarVistaSuperior(opcion);
                     contenedor.appendChild(boton);
                 });
                 
-                configurarEscenaVRConBoton();
+                document.getElementById('indicador-ar').classList.add('oculto');
+                document.getElementById('distancia-info').classList.add('oculto');
+                
+                configurarEscenaVRMejorada();
                 
             } else if (numFase === 2) {
-                // FASE 3: Conexión AR-VR
                 document.getElementById('fase-actual').textContent = `Fase 3: Conexión - ${objetoFase3.nombre}`;
+                
                 document.getElementById('mensaje-ia').innerHTML = 
-                    `<strong>FASE 3: CONEXIÓN - ${objetoFase3.nombre.toUpperCase()}</strong><br>` +
-                    `Esta vista 2D (planta) del ${objetoFase3.nombre.toLowerCase()}, ¿desde qué posición en RV la obtenías?`;
+                    `<strong>🎓 TUTOR IA - FASE 3:</strong><br>` +
+                    `${mensajeBienvenida}<br>` +
+                    `<button class="btn" style="max-width: 200px; padding: 8px; margin-top: 10px;" onclick="mostrarQR()">🔍 VER QR</button>`;
                 
                 const contenedor = document.getElementById('contenedor-opciones');
                 contenedor.innerHTML = '';
@@ -1163,257 +1801,434 @@
                     const boton = document.createElement('button');
                     boton.className = 'opcion-btn';
                     boton.textContent = opcion;
-                    boton.onclick = function() {
-                        validarConexion(opcion);
-                    };
+                    boton.onclick = () => validarConexion(opcion);
                     contenedor.appendChild(boton);
                 });
                 
-                configurarEscenaAR(true);
+                document.getElementById('indicador-ar').classList.remove('oculto');
+                document.getElementById('indicador-ar').innerHTML = '📱 Escanea el QR para ver el PLANO 2D';
+                document.getElementById('indicador-ar').style.background = 'linear-gradient(45deg, #4CAF50, #388E3C)';
+                
+                configurarMindAR(true);
             }
         }
-        
+
         // ============================================
-        // CONFIGURAR ESCENA AR (FASE 1 Y 3) - CORREGIDA
+        // CONFIGURAR MINDAR (FASE 1 Y 3)
         // ============================================
-        function configurarEscenaAR(esVistaPlanta) {
+        async function configurarMindAR(esVistaPlanta) {
             document.getElementById('indicador-ar').classList.remove('oculto');
-            document.getElementById('escena-ar').classList.remove('oculto');
-            document.getElementById('escena-vr').classList.add('oculto');
+            document.getElementById('contenedor-ar').classList.remove('oculto');
+            document.getElementById('distancia-info').classList.remove('oculto');
             
             const objeto = esVistaPlanta ? objetoFase3 : objetoFase1;
+            const container = document.getElementById('contenedor-ar');
+            container.innerHTML = '';
             
-            // IMPORTANTE: Forzar limpieza completa de AR.js
-            // Eliminar cualquier instancia previa de la escena
-            const escenaARContainer = document.getElementById('escena-ar');
-            escenaARContainer.innerHTML = '';
-            
-            // Pequeño retraso para asegurar la limpieza del DOM
-            setTimeout(() => {
-                const escenaHTML = `
-                    <a-scene 
-                        embedded 
-                        arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;"
-                        renderer="logarithmicDepthBuffer: true; antialias: true; precision: high;"
-                        vr-mode-ui="enabled: false"
-                    >
-                        <!-- Luces mejoradas -->
-                        <a-entity light="type: ambient; color: #FFFFFF; intensity: 0.8"></a-entity>
-                        <a-entity light="type: directional; color: #FFFFFF; intensity: 1.2" position="2 3 1" cast-shadow="true"></a-entity>
-                        <a-entity light="type: point; color: #FFEEDD; intensity: 0.5" position="0 2 2"></a-entity>
-                        
-                        <a-marker 
-                            preset="hiro" 
-                            id="marcador-hiro-${esVistaPlanta ? 'fase3' : 'fase1'}" 
-                            emitevents="true" 
-                            smooth="true"
-                            smoothCount="10"
-                            smoothTolerance="0.01"
-                            smoothThreshold="5"
-                        >
-                            <a-entity position="0 0.5 0" scale="0.4 0.4 0.4">
-                                ${esVistaPlanta ? `
-                                    <!-- FASE 3: VISTA PLANTA MEJORADA -->
-                                    <a-entity position="0 0.5 0">
-                                        <!-- Mesa/Base del plano -->
-                                        <a-box position="0 -0.05 0" 
-                                               width="2.5" 
-                                               height="0.1" 
-                                               depth="1.8" 
-                                               color="#5D4037"
-                                               roughness="0.9"></a-box>
-                                        
-                                        <!-- Plano arquitectónico -->
-                                        <a-plane id="plano-base-${objeto.id}" 
-                                                 position="0 0.1 0" 
-                                                 width="2.2" 
-                                                 height="1.5" 
-                                                 rotation="-90 0 0" 
-                                                 color="#FFFFFF"
-                                                 shader="flat"
-                                                 opacity="0.95">
-                                        </a-plane>
-                                        
-                                        <!-- Lápiz de arquitecto -->
-                                        <a-cylinder position="0.8 0.2 -0.6" 
-                                                   radius="0.015" 
-                                                   height="0.15" 
-                                                   color="#FF5722"
-                                                   rotation="45 0 0"></a-cylinder>
-                                        <a-cone position="0.8 0.27 -0.6" 
-                                               radius-bottom="0.02" 
-                                               radius-top="0.005" 
-                                               height="0.05" 
-                                               color="#795548"
-                                               rotation="45 0 0"></a-cone>
-                                        
-                                        <!-- Regla -->
-                                        <a-box position="-0.7 0.15 0.5" 
-                                               width="0.3" 
-                                               height="0.02" 
-                                               depth="0.02" 
-                                               color="#607D8B"
-                                               rotation="0 30 0"></a-box>
-                                    </a-entity>
-                                    
-                                    <!-- Título flotante -->
-                                    <a-text value="${objeto.nombre.toUpperCase()}" 
-                                           position="0 1.2 0" 
-                                           align="center" 
-                                           color="#1976D2" 
-                                           width="5"
-                                           font="roboto"
-                                           opacity="0.9"></a-text>
-                                    
-                                ` : `
-                                    <!-- FASE 1: OBJETO 3D MEJORADO -->
-                                    ${obtenerHTML3DParaObjeto(objeto)}
-                                    
-                                    <!-- Plataforma/base -->
-                                    <a-box position="0 ${-objeto.alto/2 - 0.05} 0" 
-                                           width="${objeto.ancho * 1.3}" 
-                                           height="0.1" 
-                                           depth="${objeto.profundidad * 1.3}" 
-                                           color="#5D4037"
-                                           roughness="0.9"></a-box>
-                                    
-                                    <!-- Título flotante -->
-                                    <a-text value="${objeto.nombre.toUpperCase()}" 
-                                           position="0 ${objeto.alto + 0.4} 0" 
-                                           align="center" 
-                                           color="#FFD700" 
-                                           width="4"
-                                           font="roboto"
-                                           opacity="0.9"></a-text>
-                                `}
-                            </a-entity>
-                        </a-marker>
-                        
-                        <a-entity camera></a-entity>
-                    </a-scene>
-                `;
-                
-                escenaARContainer.innerHTML = escenaHTML;
-                
-                // Si es Fase 3, agregar el plano específico dinámicamente
-                if (esVistaPlanta) {
-                    // Intentar varias veces para asegurar que el DOM está listo
-                    let intentos = 0;
-                    const maxIntentos = 20;
-                    
-                    const intervalo = setInterval(() => {
-                        const planoBase = document.getElementById(`plano-base-${objeto.id}`);
-                        if (planoBase) {
-                            clearInterval(intervalo);
-                            // Crear representación 3D del plano 2D
-                            const plano3D = document.createElement('a-entity');
-                            plano3D.setAttribute('position', '0 0.01 0');
-                            plano3D.setAttribute('scale', '0.9 0.9 0.9');
-                            plano3D.innerHTML = generarPlano3DParaObjeto(objeto);
-                            planoBase.appendChild(plano3D);
-                        }
-                        
-                        intentos++;
-                        if (intentos >= maxIntentos) {
-                            clearInterval(intervalo);
-                        }
-                    }, 100);
+            try {
+                const response = await fetch('./assets/qr-arquitecto.mind');
+                if (!response.ok) {
+                    throw new Error('Archivo .mind no encontrado en assets/');
                 }
-            }, 50);
-        }
-        
-        function generarPlano3DParaObjeto(objeto) {
-            let html = '';
-            
-            switch(objeto.tipo) {
-                case 'ventana':
-                    html = `
-                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
-                        <a-plane position="0 0 0.001" width="1.5" height="0.5" color="#8B4513" opacity="0.8"></a-plane>
-                        <a-plane position="0 0 0.002" width="1.4" height="0.4" color="#87CEEB" opacity="0.6"></a-plane>
-                        <a-plane position="0 0 0.003" width="1.4" height="0.02" color="#654321" opacity="0.9"></a-plane>
-                        <a-plane position="0 0 0.003" width="0.02" height="0.4" color="#654321" opacity="0.9"></a-plane>
-                        <a-cylinder position="0 0.25 0.003" height="0.02" radius="0.2" color="#DAA520" 
-                                   rotation="90 0 0" open-ended="true" theta-length="180" opacity="0.9"></a-cylinder>
-                    `;
-                    break;
-                case 'puerta':
-                    html = `
-                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
-                        <a-plane position="0 0 0.001" width="0.6" height="1.0" color="#654321" opacity="0.8"></a-plane>
-                        <a-plane position="0 0.2 0.002" width="0.5" height="0.2" color="#8B7355" opacity="0.6"></a-plane>
-                        <a-plane position="0 -0.1 0.002" width="0.5" height="0.2" color="#8B7355" opacity="0.6"></a-plane>
-                        <a-plane position="0 -0.4 0.002" width="0.5" height="0.2" color="#8B7355" opacity="0.6"></a-plane>
-                        <a-sphere position="0.2 0 0.003" radius="0.03" color="#C0C0C0" opacity="0.9"></a-sphere>
-                        <a-plane position="0 0 0.004" width="0.7" height="1.1" color="#5D4037" opacity="0.3" wireframe="true"></a-plane>
-                    `;
-                    break;
-                case 'columna':
-                    html = `
-                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
-                        <a-sphere position="0 0 0.001" radius="0.25" color="#E8E8E8" opacity="0.8"></a-sphere>
-                        <a-torus position="0 0 0.002" radius="0.3" radius-tubular="0.02" color="#D3D3D3" opacity="0.6"></a-torus>
-                        <a-torus position="0 0 0.003" radius="0.2" radius-tubular="0.01" color="#A9A9A9" opacity="0.5" dash="true"></a-torus>
-                        <a-plane position="0 0 0.004" width="0.7" height="0.7" color="#808080" opacity="0.2" wireframe="true"></a-plane>
-                    `;
-                    break;
-                case 'escalera':
-                    html = `
-                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
-                        <a-torus position="0 0 0.001" radius="0.5" radius-tubular="0.02" color="#708090" opacity="0.7"></a-torus>
-                        <a-torus position="0 0 0.002" radius="0.4" radius-tubular="0.015" color="#DEB887" opacity="0.6" arc="270" dash="true"></a-torus>
-                        <a-torus position="0 0 0.003" radius="0.3" radius-tubular="0.01" color="#D2B48C" opacity="0.5" arc="180" dash="true"></a-torus>
-                        <a-sphere position="0 0 0.004" radius="0.1" color="#708090" opacity="0.8"></a-sphere>
-                    `;
-                    break;
-                case 'arco':
-                    html = `
-                        <a-plane position="0 0 0" width="1.8" height="0.8" color="#FFFFFF" opacity="0.9"></a-plane>
-                        <a-plane position="0 0 0.001" width="1.2" height="0.4" color="#B8B8B8" opacity="0.8"></a-plane>
-                        <a-cylinder position="-0.3 0 0.002" radius="0.1" height="0.4" color="#989898" opacity="0.7"></a-cylinder>
-                        <a-cylinder position="0.3 0 0.002" radius="0.1" height="0.4" color="#989898" opacity="0.7"></a-cylinder>
-                        <a-torus position="0 0.15 0.003" radius="0.25" radius-tubular="0.05" color="#808080" opacity="0.7" arc="180" rotation="90 0 0"></a-torus>
-                    `;
-                    break;
+                
+                const mindarThree = new MindARThree({
+                    container: container,
+                    imageTargetSrc: './assets/qr-arquitecto.mind',
+                    filterMinCF: 0.001,
+                    filterBeta: 0.001,
+                });
+
+                mindarInstance = mindarThree;
+                const { renderer, scene, camera } = mindarThree;
+
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+                scene.add(ambientLight);
+                
+                const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+                dirLight.position.set(2, 5, 3);
+                dirLight.castShadow = true;
+                dirLight.shadow.mapSize.width = 1024;
+                dirLight.shadow.mapSize.height = 1024;
+                scene.add(dirLight);
+                
+                const fillLight = new THREE.PointLight(0x446688, 0.5);
+                fillLight.position.set(-2, 3, 2);
+                scene.add(fillLight);
+
+                let objetoVisual;
+                if (esVistaPlanta) {
+                    objetoVisual = crearPlano2D(objeto);
+                } else {
+                    objetoVisual = crearObjeto3D(objeto);
+                }
+                
+                objetoVisual.position.y = 0;
+                objetoVisual.position.x = 0;
+                objetoVisual.position.z = 0;
+                
+                if (!esVistaPlanta) {
+                    objetoVisual.scale.set(0.08, 0.08, 0.08);
+                } else {
+                    objetoVisual.scale.set(0.5, 0.5, 0.5);
+                }
+                
+                objetoVisual.castShadow = true;
+                objetoVisual.receiveShadow = true;
+                objetoActualAR = objetoVisual;
+
+                const anchor = mindarThree.addAnchor(0);
+                anchor.group.add(objetoVisual);
+
+                anchor.onTargetFound = () => {
+                    document.getElementById('indicador-ar').innerHTML = '✅ QR DETECTADO';
+                    document.getElementById('indicador-ar').style.background = 'linear-gradient(45deg, #4CAF50, #388E3C)';
+                    anchorDetectado = true;
+                    
+                    enviarLog('QR detectado', objeto.nombre);
+                    
+                    function escaladoLoop() {
+                        if (anchorDetectado && mindarInstance) {
+                            const distancia = 30 + Math.sin(Date.now() / 1000) * 15;
+                            actualizarEscalaPorDistancia(objetoActualAR, distancia);
+                        }
+                        requestAnimationFrame(escaladoLoop);
+                    }
+                    escaladoLoop();
+                };
+                
+                anchor.onTargetLost = () => {
+                    if (esVistaPlanta) {
+                        document.getElementById('indicador-ar').innerHTML = '📱 Escanea el QR para ver el PLANO 2D';
+                        document.getElementById('indicador-ar').style.background = 'linear-gradient(45deg, #4CAF50, #388E3C)';
+                    } else {
+                        document.getElementById('indicador-ar').innerHTML = '📱 Escanea el QR con la palabra "ARQUITECTO"';
+                        document.getElementById('indicador-ar').style.background = 'linear-gradient(45deg, rgba(0, 122, 255, 0.95), rgba(0, 188, 212, 0.95))';
+                    }
+                    anchorDetectado = false;
+                    
+                    enviarLog('QR perdido', objeto.nombre);
+                };
+
+                await mindarThree.start();
+                
+                renderer.setAnimationLoop(() => {
+                    renderer.render(scene, camera);
+                });
+
+            } catch (error) {
+                console.error('Error MindAR:', error);
+                document.getElementById('indicador-ar').innerHTML = '❌ Error: ' + error.message;
+                enviarLog('Error AR', objeto.nombre, null, null, 0, { error: error.message });
             }
-            
-            return html;
         }
-        
+
         // ============================================
-        // CONFIGURAR ESCENA VR CON BOTÓN (FASE 2)
+        // CONFIGURAR ESCENA VR (FASE 2)
         // ============================================
-        function configurarEscenaVRConBoton() {
+        function configurarEscenaVRMejorada() {
             document.getElementById('indicador-ar').classList.add('oculto');
-            document.getElementById('escena-ar').classList.add('oculto');
             document.getElementById('escena-vr').classList.remove('oculto');
+            document.getElementById('distancia-info').classList.add('oculto');
             
             const objeto = objetoFase2;
+            
+            enviarLog('Entrar a VR', objeto.nombre);
+            
+            function generarHTMLObjetoVR(objeto) {
+                let html = '';
+                
+                switch(objeto.tipo) {
+                    case 'ventana':
+                        html = `
+                            <a-box position="0 ${objeto.alto/2} 0" 
+                                   width="${objeto.ancho}" 
+                                   height="${objeto.alto}" 
+                                   depth="${objeto.profundidad}" 
+                                   color="${objeto.colorMarco}"
+                                   roughness="0.6"
+                                   metalness="0.3"
+                                   emissive="#221100"
+                                   emissiveIntensity="0.1"
+                                   shadow="cast: true; receive: true">
+                                <a-box position="0 0 0.06" 
+                                       width="${objeto.ancho * 0.9}" 
+                                       height="${objeto.alto * 0.9}" 
+                                       depth="0.05" 
+                                       color="${objeto.colorVidrio}" 
+                                       opacity="0.7"
+                                       roughness="0.1"
+                                       metalness="0.9"></a-box>
+                                <a-box position="${objeto.ancho * -0.225} 0 0.07" 
+                                       width="0.05" 
+                                       height="${objeto.alto * 0.9}" 
+                                       depth="0.04" 
+                                       color="${objeto.colorDetalles}"
+                                       roughness="0.4"
+                                       metalness="0.8"
+                                       emissive="#442200"
+                                       emissiveIntensity="0.2"></a-box>
+                                <a-box position="${objeto.ancho * 0.225} 0 0.07" 
+                                       width="0.05" 
+                                       height="${objeto.alto * 0.9}" 
+                                       depth="0.04" 
+                                       color="${objeto.colorDetalles}"
+                                       roughness="0.4"
+                                       metalness="0.8"
+                                       emissive="#442200"
+                                       emissiveIntensity="0.2"></a-box>
+                                <a-cylinder position="0 ${objeto.alto * 0.45} 0.07" 
+                                           height="0.04" 
+                                           radius="${objeto.ancho * 0.125}" 
+                                           color="${objeto.colorDetalles}"
+                                           rotation="90 0 0"
+                                           open-ended="true"
+                                           theta-length="180"
+                                           roughness="0.4"
+                                           metalness="0.8"
+                                           emissive="#442200"
+                                           emissiveIntensity="0.2"></a-cylinder>
+                                <a-box position="0 ${objeto.alto * -0.45} 0.07" 
+                                       width="${objeto.ancho * 0.9}" 
+                                       height="0.1" 
+                                       depth="0.04" 
+                                       color="${objeto.colorMarco}"
+                                       roughness="0.8"></a-box>
+                            </a-box>
+                            <a-box position="0 ${objeto.alto * -0.55} 0.1" 
+                                   width="${objeto.ancho * 1.2}" 
+                                   height="0.05" 
+                                   depth="0.15" 
+                                   color="#5D4037"
+                                   roughness="0.9"
+                                   shadow="cast: true; receive: true"></a-box>
+                        `;
+                        break;
+                        
+                    case 'puerta':
+                        html = `
+                            <a-box position="0 ${objeto.alto/2} 0" 
+                                   width="${objeto.ancho}" 
+                                   height="${objeto.alto}" 
+                                   depth="${objeto.profundidad}" 
+                                   color="${objeto.colorMadera}"
+                                   roughness="0.7"
+                                   metalness="0.1"
+                                   emissive="#221100"
+                                   emissiveIntensity="0.1"
+                                   shadow="cast: true; receive: true">
+                                <a-box position="0 ${objeto.alto * 0.3} 0.06" 
+                                       width="${objeto.ancho * 0.8}" 
+                                       height="${objeto.alto * 0.25}" 
+                                       depth="0.04" 
+                                       color="${objeto.colorDetalles}"
+                                       roughness="0.8"
+                                       emissive="#332211"
+                                       emissiveIntensity="0.1"></a-box>
+                                <a-box position="0 ${objeto.alto * -0.1} 0.06" 
+                                       width="${objeto.ancho * 0.8}" 
+                                       height="${objeto.alto * 0.25}" 
+                                       depth="0.04" 
+                                       color="${objeto.colorDetalles}"
+                                       roughness="0.8"
+                                       emissive="#332211"
+                                       emissiveIntensity="0.1"></a-box>
+                                <a-cylinder position="${objeto.ancho * 0.35} 0 0.08" 
+                                           radius="0.04" 
+                                           height="0.02" 
+                                           color="${objeto.colorMetal}"
+                                           metalness="0.9"
+                                           roughness="0.2"
+                                           emissive="#333333"
+                                           emissiveIntensity="0.3"></a-cylinder>
+                                <a-torus position="${objeto.ancho * 0.4} 0 0.08" 
+                                        radius="0.03" 
+                                        radius-tubular="0.008" 
+                                        color="${objeto.colorMetal}"
+                                        metalness="0.9"
+                                        arc="180"
+                                        rotation="0 90 0"
+                                        emissive="#333333"
+                                        emissiveIntensity="0.3"></a-torus>
+                            </a-box>
+                            <a-box position="0 ${objeto.alto/2} ${objeto.profundidad * -0.6}" 
+                                   width="${objeto.ancho * 1.1}" 
+                                   height="${objeto.alto * 1.05}" 
+                                   depth="0.08" 
+                                   color="#5D4037"
+                                   roughness="0.9"
+                                   shadow="cast: true; receive: true"></a-box>
+                            <a-box position="0 ${objeto.alto + 0.1} 0" 
+                                   width="${objeto.ancho * 1.2}" 
+                                   height="0.15" 
+                                   depth="0.2" 
+                                   color="#5D4037"
+                                   roughness="0.9"
+                                   shadow="cast: true; receive: true"></a-box>
+                        `;
+                        break;
+                        
+                    case 'columna':
+                        html = `
+                            <a-cylinder position="0 0.2 0" 
+                                       radius="${objeto.ancho * 0.6}" 
+                                       height="0.4" 
+                                       color="${objeto.colorBase}"
+                                       roughness="0.6"
+                                       shadow="cast: true; receive: true"></a-cylinder>
+                            <a-cylinder position="0 ${objeto.alto * 0.5} 0" 
+                                       radius="${objeto.ancho * 0.35}" 
+                                       height="${objeto.alto * 0.8}" 
+                                       color="${objeto.colorMarmol}"
+                                       roughness="0.4"
+                                       metalness="0.3"
+                                       emissive="#333333"
+                                       emissiveIntensity="0.1"
+                                       shadow="cast: true; receive: true"></a-cylinder>
+                            <a-entity position="0 ${objeto.alto * 0.9} 0">
+                                <a-cylinder position="0 0.2 0" 
+                                           radius="${objeto.ancho * 0.45}" 
+                                           height="0.4" 
+                                           color="${objeto.colorDetalles}"
+                                           roughness="0.5"
+                                           emissive="#444444"
+                                           emissiveIntensity="0.2"
+                                           shadow="cast: true"></a-cylinder>
+                                <a-cone position="0 0.4 0" 
+                                       radius-bottom="${objeto.ancho * 0.4}" 
+                                       radius-top="${objeto.ancho * 0.3}" 
+                                       height="0.3" 
+                                       color="${objeto.colorDetalles}"
+                                       roughness="0.5"
+                                       emissive="#444444"
+                                       emissiveIntensity="0.2"
+                                       shadow="cast: true"></a-cone>
+                            </a-entity>
+                        `;
+                        break;
+                        
+                    case 'escalera':
+                        html = `
+                            <a-entity position="0 ${objeto.alto/2} 0">
+                                <a-cylinder position="0 ${-objeto.alto/2 + 0.1} 0" 
+                                           radius="${objeto.ancho/2}" 
+                                           height="0.2" 
+                                           color="#5D4037"
+                                           roughness="0.9"
+                                           shadow="cast: true; receive: true"></a-cylinder>
+                                <a-cylinder position="0 ${objeto.alto * 0.1} 0" 
+                                           radius="0.1" 
+                                           height="${objeto.alto}" 
+                                           color="${objeto.colorMetal}"
+                                           metalness="0.8"
+                                           roughness="0.3"
+                                           emissive="#333333"
+                                           emissiveIntensity="0.2"
+                                           shadow="cast: true"></a-cylinder>
+                                ${Array.from({ length: 12 }, (_, i) => {
+                                    const y = i * (objeto.alto / 12) + (objeto.alto / 24);
+                                    const angulo = i * (Math.PI * 2 / 12);
+                                    const radio = objeto.ancho/2 - 0.2;
+                                    const x = Math.cos(angulo) * radio;
+                                    const z = Math.sin(angulo) * radio;
+                                    return `
+                                        <a-box position="${x} ${y} ${z}" 
+                                               width="0.6" 
+                                               height="0.05" 
+                                               depth="0.2" 
+                                               color="${objeto.colorMadera}"
+                                               rotation="0 ${-angulo * 180/Math.PI} 0"
+                                               roughness="0.8"
+                                               emissive="#332211"
+                                               emissiveIntensity="0.1"
+                                               shadow="cast: true; receive: true"></a-box>
+                                    `;
+                                }).join('')}
+                                <a-torus position="0 ${objeto.alto * 0.9} 0" 
+                                        radius="${objeto.ancho/2 - 0.1}" 
+                                        radius-tubular="0.02" 
+                                        color="${objeto.colorMetal}"
+                                        metalness="0.8"
+                                        rotation="90 0 0"
+                                        shadow="cast: true"></a-torus>
+                            </a-entity>
+                        `;
+                        break;
+                        
+                    case 'arco':
+                        html = `
+                            <a-box position="0 ${objeto.alto * 0.1} 0" 
+                                   width="${objeto.ancho}" 
+                                   height="0.2" 
+                                   depth="${objeto.profundidad}" 
+                                   color="${objeto.colorPiedra}"
+                                   roughness="0.7"
+                                   emissive="#222222"
+                                   emissiveIntensity="0.1"
+                                   shadow="cast: true; receive: true"></a-box>
+                            <a-cylinder position="${objeto.ancho * -0.35} ${objeto.alto * 0.6} 0" 
+                                       radius="0.2" 
+                                       height="${objeto.alto * 0.8}" 
+                                       color="${objeto.colorPiedra}"
+                                       roughness="0.6"
+                                       emissive="#333333"
+                                       emissiveIntensity="0.1"
+                                       shadow="cast: true; receive: true"></a-cylinder>
+                            <a-cylinder position="${objeto.ancho * 0.35} ${objeto.alto * 0.6} 0" 
+                                       radius="0.2" 
+                                       height="${objeto.alto * 0.8}" 
+                                       color="${objeto.colorPiedra}"
+                                       roughness="0.6"
+                                       emissive="#333333"
+                                       emissiveIntensity="0.1"
+                                       shadow="cast: true; receive: true"></a-cylinder>
+                            <a-torus position="0 ${objeto.alto * 0.8} 0" 
+                                    radius="${objeto.ancho * 0.25}" 
+                                    radius-tubular="0.15" 
+                                    color="${objeto.colorPiedra}"
+                                    arc="180"
+                                    rotation="0 0 90"
+                                    roughness="0.6"
+                                    emissive="#333333"
+                                    emissiveIntensity="0.1"
+                                    shadow="cast: true"></a-torus>
+                        `;
+                        break;
+                }
+                
+                return html;
+            }
             
             const escenaHTML = `
                 <a-scene 
                     embedded 
                     vr-mode-ui="enabled: true"
-                    renderer="antialias: true; precision: high"
-                    stats
+                    renderer="antialias: true; precision: high; physicallyCorrectLights: true; shadowMapEnabled: true"
                 >
-                    <a-sky color="#E3F2FD"></a-sky>
+                    <a-sky color="#87CEEB"></a-sky>
                     
                     <a-entity geometry="primitive: plane; width: 30; height: 30" 
                              rotation="-90 0 0" 
-                             material="src: https://cdn.aframe.io/a-painter/images/floor.jpg; repeat: 10 10"
+                             material="src: https://cdn.aframe.io/a-painter/images/floor.jpg; repeat: 10 10; roughness: 0.8; metalness: 0.2"
                              position="0 0 0"
                              shadow="receive: true"></a-entity>
                     
+                    <a-entity light="type: ambient; color: #FFFFFF; intensity: 0.6"></a-entity>
+                    <a-entity light="type: directional; color: #FFFFFF; intensity: 1.2" position="5 10 5" cast-shadow="true"></a-entity>
+                    <a-entity light="type: point; color: #88AAFF; intensity: 0.5" position="0 5 0"></a-entity>
+                    
                     <a-entity position="0 1.5 -6" scale="1.2 1.2 1.2">
-                        ${obtenerHTML3DParaObjeto(objeto)}
+                        ${generarHTMLObjetoVR(objeto)}
                         
                         <a-cylinder position="0 ${-objeto.alto/2 - 0.2} 0" 
                                    radius="${Math.max(objeto.ancho, objeto.profundidad) * 0.8}" 
                                    height="0.4" 
                                    color="#5D4037"
                                    roughness="0.9"
-                                   segments-radial="32"></a-cylinder>
+                                   segments-radial="32"
+                                   shadow="cast: true; receive: true"></a-cylinder>
                         
                         ${objeto.tipo === 'arco' || objeto.tipo === 'puerta' ? `
                             <a-box position="0 ${-objeto.alto/2 - 0.1} ${objeto.profundidad * 0.6}" 
@@ -1421,13 +2236,15 @@
                                    height="0.1" 
                                    depth="0.8" 
                                    color="#696969"
-                                   roughness="0.9"></a-box>
+                                   roughness="0.9"
+                                   shadow="cast: true; receive: true"></a-box>
                             <a-box position="0 ${-objeto.alto/2 - 0.05} ${objeto.profundidad * 0.9}" 
                                    width="${objeto.ancho * 0.7}" 
                                    height="0.1" 
                                    depth="0.6" 
                                    color="#808080"
-                                   roughness="0.9"></a-box>
+                                   roughness="0.9"
+                                   shadow="cast: true; receive: true"></a-box>
                         ` : ''}
                     </a-entity>
                     
@@ -1436,29 +2253,23 @@
                                align="center" 
                                color="#1976D2" 
                                width="3"
-                               position="0 0.5 0"></a-text>
+                               position="0 0.5 0"
+                               shadow="true"
+                               font="roboto"></a-text>
                         <a-text value="WASD: Moverse | Mouse: Mirar" 
                                align="center" 
                                color="#FFFFFF" 
                                width="2.5"
                                position="0 0.2 0"
-                               opacity="0.8"></a-text>
+                               opacity="0.8"
+                               font="roboto"></a-text>
                         <a-text value="OBJETIVO: Encontrar la vista superior" 
                                align="center" 
                                color="#4CAF50" 
                                width="2.5"
                                position="0 -0.1 0"
-                               opacity="0.9"></a-text>
-                    </a-entity>
-                    
-                    <a-entity light="type: ambient; color: #FFFFFF; intensity: 0.7"></a-entity>
-                    <a-entity light="type: directional; color: #FFFFFF; intensity: 0.9" position="5 10 5" cast-shadow="true"></a-entity>
-                    <a-entity light="type: hemisphere; color: #87CEEB; groundColor: #4CAF50; intensity: 0.6"></a-entity>
-                    
-                    <a-entity position="10 8 -15">
-                        <a-sphere radius="1" color="#FFFFFF" opacity="0.7"></a-sphere>
-                        <a-sphere radius="0.8" color="#FFFFFF" opacity="0.7" position="1 0.3 0"></a-sphere>
-                        <a-sphere radius="0.6" color="#FFFFFF" opacity="0.7" position="-0.8 0.2 0.5"></a-sphere>
+                               opacity="0.9"
+                               font="roboto"></a-text>
                     </a-entity>
                     
                     <a-entity 
@@ -1476,89 +2287,55 @@
             `;
             
             document.getElementById('escena-vr').innerHTML = escenaHTML;
-            
             escenaVR = document.querySelector('#escena-vr a-scene');
-            
-            crearBotonVRInmediato();
+            crearBotonVR();
         }
-        
-        // ============================================
-        // FUNCIONES RESTANTES
-        // ============================================
-        
-        function crearBotonVRInmediato() {
-            if (botonVR) {
-                botonVR.remove();
-                botonVR = null;
-            }
+
+        function crearBotonVR() {
+            if (botonVR) botonVR.remove();
             
             botonVR = document.createElement('button');
             botonVR.className = 'vr-gafas-btn';
             botonVR.id = 'btn-vr-gafas';
             botonVR.innerHTML = '👓 ACTIVAR GAFAS VR';
-            botonVR.style.display = 'block';
-            botonVR.style.visibility = 'visible';
-            botonVR.style.opacity = '1';
             
-            botonVR.onclick = function() {
-                toggleModoVR();
-            };
-            
+            botonVR.onclick = toggleModoVR;
             document.body.appendChild(botonVR);
         }
-        
+
         function toggleModoVR() {
             if (!escenaVR) {
                 escenaVR = document.querySelector('#escena-vr a-scene');
-                if (!escenaVR) {
-                    alert("Error: La escena VR no se cargó correctamente.");
-                    return;
-                }
+                if (!escenaVR) return;
             }
             
             if (!modoVR) {
-                botonVR.innerHTML = '👓 CARGANDO VR...';
-                botonVR.disabled = true;
-                
                 escenaVR.enterVR().then(() => {
                     modoVR = true;
                     botonVR.innerHTML = '👓 DESACTIVAR GAFAS VR';
-                    botonVR.disabled = false;
                     botonVR.style.background = 'linear-gradient(45deg, #4CAF50, #388E3C)';
                     
-                    const objeto = objetoFase2;
-                    document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()} - GAFAS VR ACTIVADAS</strong><br>` +
-                        "<span class='mensaje-exito'>✅ Modo VR activado</span><br>" +
-                        `Usa las gafas VR para explorar el ${objeto.nombre.toLowerCase()} desde diferentes ángulos.`;
-                        
-                }).catch(error => {
+                    enviarLog('Activar VR', faseActual === 1 ? objetoFase2.nombre : '');
+                }).catch(() => {
+                    modoVR = false;
                     botonVR.innerHTML = '👓 ACTIVAR GAFAS VR';
-                    botonVR.disabled = false;
                     botonVR.style.background = 'linear-gradient(45deg, #FF9800, #F57C00)';
-                    
-                    const objeto = objetoFase2;
-                    document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-error'>⚠️ VR no disponible</span><br>" +
-                        "Tu dispositivo/browser no soporta VR. Continúa en modo normal.";
                 });
-                
             } else {
                 escenaVR.exitVR();
                 modoVR = false;
                 botonVR.innerHTML = '👓 ACTIVAR GAFAS VR';
                 botonVR.style.background = 'linear-gradient(45deg, #FF9800, #F57C00)';
                 
-                const objeto = objetoFase2;
-                document.getElementById('mensaje-ia').innerHTML = 
-                    `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                    `Para ver la vista superior del ${objeto.nombre.toLowerCase()}, ¿debes trasladarte o rotar el objeto?<br>` +
-                    "<small style='color:#B0BEC5'>Usa las teclas WASD para moverte y el mouse para mirar alrededor</small>";
+                enviarLog('Desactivar VR', faseActual === 1 ? objetoFase2.nombre : '');
             }
         }
+
+        // ============================================
+        // FUNCIONES DE VALIDACIÓN
+        // ============================================
         
-        function validarVistaFrontal() {
+        async function validarVistaFrontal() {
             const boton = document.getElementById('boton-validar');
             if (boton) {
                 boton.disabled = true;
@@ -1566,330 +2343,314 @@
                 boton.style.background = "#666";
             }
             
-            setTimeout(() => {
-                const calidad = Math.random();
-                let puntos = 0;
-                let retroalimentacion = "";
-                const objeto = objetoFase1;
+            guardarTiempoFase(0);
+            
+            const calidad = Math.random();
+            let puntosGanados = 0;
+            let esCorrecto = false;
+            const objeto = objetoFase1;
+            
+            if (calidad > 0.7) {
+                puntosGanados = 30;
+                esCorrecto = true;
+            } else if (calidad > 0.4) {
+                puntosGanados = 20;
+                esCorrecto = true;
+            } else {
+                puntosGanados = 10;
+                esCorrecto = false;
+            }
+            
+            const mensajeIA = await generarRespuestaUnica({
+                tipo: 'validacion',
+                objeto: objeto,
+                esCorrecto: esCorrecto,
+                puntosGanados: puntosGanados,
+                fase: 0
+            });
+            
+            const indexFase1 = respuestasUsuario.findIndex(r => r.fase === 1);
+            if (indexFase1 === -1) {
+                respuestasUsuario.push({
+                    fase: 1,
+                    objeto: objeto.nombre,
+                    puntos: puntosGanados,
+                    retroalimentacion: mensajeIA,
+                    correcto: esCorrecto,
+                    tiempo: tiemposPorFase[0]
+                });
                 
-                if (calidad > 0.7) {
-                    puntos = 30;
-                    retroalimentacion = `Excelente! Has identificado correctamente la vista frontal del ${objeto.nombre.toLowerCase()}`;
-                } else if (calidad > 0.4) {
-                    puntos = 20;
-                    retroalimentacion = `Buena comprensión de la vista frontal del ${objeto.nombre.toLowerCase()}`;
-                } else {
-                    puntos = 10;
-                    retroalimentacion = `Necesitas practicar más la vista frontal de objetos como el ${objeto.nombre.toLowerCase()}`;
-                }
+                puntaje += puntosGanados;
+                document.querySelector('#puntaje span').textContent = puntaje;
                 
-                const indexFase1 = respuestasUsuario.findIndex(r => r.fase === 1);
-                if (indexFase1 === -1) {
-                    respuestasUsuario.push({
-                        fase: 1,
-                        objeto: objeto.nombre,
-                        puntos: puntos,
-                        retroalimentacion: retroalimentacion
-                    });
-                    
-                    puntaje += puntos;
-                    document.querySelector('#puntaje span').textContent = puntaje;
-                }
-                
-                document.getElementById('mensaje-ia').innerHTML = 
-                    `<strong>FASE 1: VISTA FRONTAL - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                    "✅ Validación completada<br>+" + puntos + " puntos<br><br>" +
-                    `<em>Pasando a Fase 2 con un nuevo objeto...</em>`;
-                
-                setTimeout(() => {
-                    iniciarFase(1);
-                }, 2000);
-                
-            }, 2000);
+                enviarLog('Validar vista frontal', objeto.nombre, 'VALIDAR', esCorrecto, puntosGanados, {
+                    calidad: calidad,
+                    tiempoMs: tiemposPorFase[0]
+                });
+            }
+            
+            document.getElementById('mensaje-ia').innerHTML = 
+                `<strong>🎓 TUTOR IA - FASE 1:</strong><br>` +
+                `${esCorrecto ? '✅' : '⚠️'} Validación completada<br>+${puntosGanados} puntos<br><br>` +
+                `${mensajeIA}<br><br>` +
+                `⏱️ Preparando Fase 2 en 12 segundos...`;
+            
+            setTimeout(() => iniciarFase(1), 12000);
         }
         
-        function validarVistaSuperior(opcion) {
+        async function validarVistaSuperior(opcion) {
             let correcto = opcion === "TRASLADARME";
-            let puntos = 0;
-            let retroalimentacion = "";
+            let puntosGanados = correcto ? 40 : 0;
             const objeto = objetoFase2;
+            
+            const mensajeIA = await generarRespuestaUnica({
+                tipo: 'validacion',
+                objeto: objeto,
+                esCorrecto: correcto,
+                opcion: opcion,
+                puntosGanados: puntosGanados,
+                fase: 1
+            });
             
             const indexFase2 = respuestasUsuario.findIndex(r => r.fase === 2);
             
             if (indexFase2 === -1) {
                 fase2Respondida = true;
                 
+                respuestasUsuario.push({
+                    fase: 2,
+                    objeto: objeto.nombre,
+                    opcion: opcion,
+                    correcto: correcto,
+                    puntos: puntosGanados,
+                    retroalimentacion: mensajeIA,
+                    tiempo: correcto ? tiemposPorFase[1] : 0
+                });
+                
                 if (correcto) {
-                    puntos = 40;
-                    retroalimentacion = `Excelente! Comprendiste que para ver el ${objeto.nombre.toLowerCase()} desde arriba debes trasladarte`;
-                    
-                    respuestasUsuario.push({
-                        fase: 2,
-                        objeto: objeto.nombre,
-                        opcion: opcion,
-                        correcto: correcto,
-                        puntos: puntos,
-                        retroalimentacion: retroalimentacion
-                    });
-                    
-                    puntaje += puntos;
+                    guardarTiempoFase(1);
+                    puntaje += puntosGanados;
                     document.querySelector('#puntaje span').textContent = puntaje;
                     
                     document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-exito'>✅ ¡CORRECTO!</span><br>" +
-                        `Para ver la vista superior del ${objeto.nombre.toLowerCase()} necesitas trasladarte.<br>` +
-                        "+40 puntos<br><br>" +
-                        `<em>Pasando a Fase 3 con un nuevo objeto...</em>`;
+                        `<strong>🎓 TUTOR IA - FASE 2:</strong><br>` +
+                        `<span class='mensaje-exito'>✅ ¡CORRECTO!</span><br>` +
+                        `+${puntosGanados} puntos<br><br>` +
+                        `${mensajeIA}<br><br>` +
+                        `⏱️ Preparando Fase 3 en 12 segundos...`;
                     
                     fase2Avanzada = true;
-                    setTimeout(() => {
-                        iniciarFase(2);
-                    }, 2000);
+                    setTimeout(() => iniciarFase(2), 12000);
                     
                 } else {
-                    retroalimentacion = `Recuerda: Para ver el ${objeto.nombre.toLowerCase()} desde arriba, rotarlo cambia su orientación, no tu perspectiva`;
-                    
-                    respuestasUsuario.push({
-                        fase: 2,
-                        objeto: objeto.nombre,
-                        opcion: opcion,
-                        correcto: correcto,
-                        puntos: 0,
-                        retroalimentacion: retroalimentacion
-                    });
-                    
                     document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-error'>❌ Intenta nuevamente</span><br>" +
-                        `Rotar el ${objeto.nombre.toLowerCase()} cambia su orientación, no tu perspectiva. Intenta con otra opción.`;
+                        `<strong>🎓 TUTOR IA - FASE 2:</strong><br>` +
+                        `<span class='mensaje-error'>❌ Intenta nuevamente</span><br>` +
+                        `${mensajeIA}`;
                 }
-            } else {
-                if (correcto && !fase2Avanzada) {
-                    retroalimentacion = `Excelente! Comprendiste que para ver el ${objeto.nombre.toLowerCase()} desde arriba debes trasladarte`;
-                    
-                    respuestasUsuario[indexFase2].opcion = opcion;
-                    respuestasUsuario[indexFase2].correcto = correcto;
-                    respuestasUsuario[indexFase2].retroalimentacion = retroalimentacion;
-                    
-                    document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-exito'>✅ ¡Ahora es correcto!</span><br>" +
-                        `Para ver la vista superior del ${objeto.nombre.toLowerCase()} necesitas trasladarte.<br>` +
-                        `<em>Pasando a Fase 3 con un nuevo objeto...</em>`;
-                    
-                    fase2Avanzada = true;
-                    setTimeout(() => {
-                        iniciarFase(2);
-                    }, 2000);
-                } else if (!correcto) {
-                    document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 2: VISTA SUPERIOR - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-error'>❌ Sigue intentando</span><br>" +
-                        `Rotar el ${objeto.nombre.toLowerCase()} cambia su orientación, no tu perspectiva. Intenta con otra opción.`;
-                }
+                
+                enviarLog('Validar vista superior', objeto.nombre, opcion, correcto, puntosGanados, {
+                    tiempoMs: tiemposPorFase[1]
+                });
+                
+            } else if (correcto && !fase2Avanzada) {
+                guardarTiempoFase(1);
+                respuestasUsuario[indexFase2].opcion = opcion;
+                respuestasUsuario[indexFase2].correcto = correcto;
+                respuestasUsuario[indexFase2].retroalimentacion = mensajeIA;
+                respuestasUsuario[indexFase2].tiempo = tiemposPorFase[1];
+                
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>🎓 TUTOR IA - FASE 2:</strong><br>` +
+                    `<span class='mensaje-exito'>✅ ¡Ahora es correcto!</span><br>` +
+                    `${mensajeIA}<br><br>` +
+                    `⏱️ Preparando Fase 3 en 12 segundos...`;
+                
+                fase2Avanzada = true;
+                setTimeout(() => iniciarFase(2), 12000);
+                
+                enviarLog('Validar vista superior (corregido)', objeto.nombre, opcion, correcto, 40, {
+                    tiempoMs: tiemposPorFase[1]
+                });
             }
         }
         
-        function validarConexion(opcion) {
+        async function validarConexion(opcion) {
             let correcto = opcion === "POSICIÓN SUPERIOR";
-            let puntos = 0;
-            let retroalimentacion = "";
+            let puntosGanados = correcto ? 30 : 0;
             const objeto = objetoFase3;
+            
+            const mensajeIA = await generarRespuestaUnica({
+                tipo: 'validacion',
+                objeto: objeto,
+                esCorrecto: correcto,
+                opcion: opcion,
+                puntosGanados: puntosGanados,
+                fase: 2
+            });
             
             const indexFase3 = respuestasUsuario.findIndex(r => r.fase === 3);
             
             if (indexFase3 === -1) {
                 fase3Respondida = true;
                 
+                respuestasUsuario.push({
+                    fase: 3,
+                    objeto: objeto.nombre,
+                    opcion: opcion,
+                    correcto: correcto,
+                    puntos: puntosGanados,
+                    retroalimentacion: mensajeIA,
+                    tiempo: correcto ? tiemposPorFase[2] : 0
+                });
+                
                 if (correcto) {
-                    puntos = 30;
-                    retroalimentacion = `Perfecto! Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D`;
-                    
-                    respuestasUsuario.push({
-                        fase: 3,
-                        objeto: objeto.nombre,
-                        opcion: opcion,
-                        correcto: correcto,
-                        puntos: puntos,
-                        retroalimentacion: retroalimentacion
-                    });
-                    
-                    puntaje += puntos;
+                    guardarTiempoFase(2);
+                    puntaje += puntosGanados;
                     document.querySelector('#puntaje span').textContent = puntaje;
                     
                     document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-exito'>✅ ¡EXCELENTE!</span><br>" +
-                        `Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D.<br>` +
-                        "+30 puntos<br><br>" +
-                        "<em>Actividad completada</em>";
+                        `<strong>🎓 TUTOR IA - FASE 3:</strong><br>` +
+                        `<span class='mensaje-exito'>✅ ¡EXCELENTE!</span><br>` +
+                        `+${puntosGanados} puntos<br><br>` +
+                        `${mensajeIA}<br><br>` +
+                        `⏱️ Generando análisis final...`;
                     
                     fase3Avanzada = true;
-                    setTimeout(() => {
-                        mostrarResultados();
-                    }, 2000);
+                    setTimeout(() => mostrarResultados(), 12000);
                     
                 } else {
-                    retroalimentacion = `La vista planta (2D) del ${objeto.nombre.toLowerCase()} se proyecta desde la posición superior en 3D`;
-                    
-                    respuestasUsuario.push({
-                        fase: 3,
-                        objeto: objeto.nombre,
-                        opcion: opcion,
-                        correcto: correcto,
-                        puntos: 0,
-                        retroalimentacion: retroalimentacion
-                    });
-                    
                     document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-error'>❌ Revisa el concepto</strong><br>" +
-                        `La vista planta (2D) del ${objeto.nombre.toLowerCase()} se proyecta desde la posición superior. Intenta con otra opción.`;
+                        `<strong>🎓 TUTOR IA - FASE 3:</strong><br>` +
+                        `<span class='mensaje-error'>❌ Revisa el concepto</span><br>` +
+                        `${mensajeIA}`;
                 }
-            } else {
-                if (correcto && !fase3Avanzada) {
-                    retroalimentacion = `Perfecto! Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D`;
-                    
-                    respuestasUsuario[indexFase3].opcion = opcion;
-                    respuestasUsuario[indexFase3].correcto = correcto;
-                    respuestasUsuario[indexFase3].retroalimentacion = retroalimentacion;
-                    
-                    document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-exito'>✅ ¡Ahora es correcto!</span><br>" +
-                        `Has conectado correctamente la vista 2D del ${objeto.nombre.toLowerCase()} con la posición 3D.<br>` +
-                        "<em>Actividad completada</em>";
-                    
-                    fase3Avanzada = true;
-                    setTimeout(() => {
-                        mostrarResultados();
-                    }, 2000);
-                } else if (!correcto) {
-                    document.getElementById('mensaje-ia').innerHTML = 
-                        `<strong>FASE 3: CONEXIÓN - ${objeto.nombre.toUpperCase()}</strong><br>` +
-                        "<span class='mensaje-error'>❌ Sigue intentando</strong><br>" +
-                        `La vista planta (2D) del ${objeto.nombre.toLowerCase()} se proyecta desde la posición superior. Intenta con otra opción.`;
-                }
+                
+                enviarLog('Validar conexión', objeto.nombre, opcion, correcto, puntosGanados, {
+                    tiempoMs: tiemposPorFase[2]
+                });
+                
+            } else if (correcto && !fase3Avanzada) {
+                guardarTiempoFase(2);
+                respuestasUsuario[indexFase3].opcion = opcion;
+                respuestasUsuario[indexFase3].correcto = correcto;
+                respuestasUsuario[indexFase3].retroalimentacion = mensajeIA;
+                respuestasUsuario[indexFase3].tiempo = tiemposPorFase[2];
+                
+                document.getElementById('mensaje-ia').innerHTML = 
+                    `<strong>🎓 TUTOR IA - FASE 3:</strong><br>` +
+                    `<span class='mensaje-exito'>✅ ¡Ahora es correcto!</span><br>` +
+                    `${mensajeIA}<br><br>` +
+                    `⏱️ Generando análisis final...`;
+                
+                fase3Avanzada = true;
+                setTimeout(() => mostrarResultados(), 12000);
+                
+                enviarLog('Validar conexión (corregido)', objeto.nombre, opcion, correcto, 30, {
+                    tiempoMs: tiemposPorFase[2]
+                });
             }
         }
-        
-        function mostrarResultados() {
-            document.getElementById('barra-superior').classList.add('oculto');
-            document.getElementById('panel-ia').classList.add('oculto');
-            document.getElementById('escena-ar').classList.add('oculto');
-            document.getElementById('escena-vr').classList.add('oculto');
-            document.getElementById('indicador-ar').classList.add('oculto');
-            
-            if (botonVR) {
-                botonVR.remove();
-                botonVR = null;
+
+        // ============================================
+        // MOSTRAR RESULTADOS
+        // ============================================
+        async function mostrarResultados() {
+            if (tiempoInicioFase) {
+                guardarTiempoFase(faseActual);
             }
-            modoVR = false;
+            
+            document.getElementById('barra-superior').classList.add('oculto');
+            document.getElementById('panel-ia').classList.remove('oculto');
+            document.getElementById('indicador-ar').classList.add('oculto');
+            document.getElementById('contenedor-ar').classList.add('oculto');
+            document.getElementById('escena-vr').classList.add('oculto');
+            document.getElementById('qr-visualizacion').style.display = 'none';
+            document.getElementById('distancia-info').classList.add('oculto');
+            
+            if (botonVR) botonVR.remove();
             
             document.getElementById('puntaje-final').textContent = puntaje;
-            generarRecomendaciones();
+            
+            document.getElementById('mensaje-ia').innerHTML = 
+                `<strong>🎓 TUTOR IA:</strong><br>` +
+                `Generando análisis personalizado para la sesión #${numeroSesion}...`;
+            
+            const mensajeRecomendaciones = await generarRespuestaUnica({
+                tipo: 'recomendaciones'
+            });
+            
+            generarRecomendaciones(mensajeRecomendaciones);
+            
             document.getElementById('resultados').style.display = 'flex';
+            
+            const tiempoTotal = tiemposPorFase[0] + tiemposPorFase[1] + tiemposPorFase[2];
+            enviarLog('Actividad completada', 'general', null, null, puntaje, {
+                respuestas: respuestasUsuario,
+                tiemposPorFase: tiemposPorFase,
+                tiempoTotalMs: tiempoTotal,
+                sesion: numeroSesion
+            });
         }
-        
-        function generarRecomendaciones() {
+
+        function generarRecomendaciones(mensajeIA) {
             const contenedor = document.getElementById('recomendaciones-container');
-            contenedor.innerHTML = '';
             
             const puntajeMaximo = 100;
             const porcentaje = (puntaje / puntajeMaximo) * 100;
             
-            let recomendacionesHTML = '<h3 style="color: #00BCD4; text-align: center; margin-bottom: 20px;">📈 RECOMENDACIONES PARA TU APRENDIZAJE</h3>';
+            let nivel = '';
+            if (porcentaje >= 90) nivel = '🏛️ Arquitecto Experto';
+            else if (porcentaje >= 70) nivel = '📐 Diseñador Competente';
+            else if (porcentaje >= 50) nivel = '📏 Aprendiz en Desarrollo';
+            else nivel = '🎓 Estudiante Principiante';
+            
+            let recomendacionesHTML = '<h3 style="color: #00BCD4; text-align: center; margin-bottom: 20px;">📈 ANÁLISIS DEL TUTOR IA</h3>';
+            
+            recomendacionesHTML += `<div style="text-align: right; font-size: 10px; color: #87CEEB; margin-bottom: 10px;">`;
+            recomendacionesHTML += `🆔 Sesión #${numeroSesion} | ${new Date().toLocaleString()}`;
+            recomendacionesHTML += `</div>`;
             
             recomendacionesHTML += '<div style="margin: 15px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">';
-            recomendacionesHTML += '<p><strong style="color: #00BCD4;">Objetos arquitectónicos utilizados:</strong></p>';
-            const objetosUnicos = [];
-            respuestasUsuario.forEach(respuesta => {
-                if (!objetosUnicos.includes(respuesta.objeto)) {
-                    objetosUnicos.push(respuesta.objeto);
-                }
-            });
-            objetosUnicos.forEach(objeto => {
-                const objInfo = objetosArquitectonicos.find(o => o.nombre === objeto);
-                recomendacionesHTML += `<div style="margin: 8px 0; padding: 8px; background: rgba(255, 255, 255, 0.03); border-radius: 5px; border-left: 3px solid #00BCD4;">
-                    <strong>${objeto}:</strong> ${objInfo ? objInfo.descripcion : 'Elemento arquitectónico'}
-                </div>`;
-            });
+            recomendacionesHTML += '<p><strong style="color: #00BCD4;">Tiempos por fase:</strong></p>';
+            recomendacionesHTML += `<p>⏱️ Fase 1 (${objetoFase1?.nombre || 'Objeto'}): ${(tiemposPorFase[0] / 1000).toFixed(2)} segundos</p>`;
+            recomendacionesHTML += `<p>⏱️ Fase 2 (${objetoFase2?.nombre || 'Objeto'}): ${(tiemposPorFase[1] / 1000).toFixed(2)} segundos</p>`;
+            recomendacionesHTML += `<p>⏱️ Fase 3 (${objetoFase3?.nombre || 'Objeto'}): ${(tiemposPorFase[2] / 1000).toFixed(2)} segundos</p>`;
+            recomendacionesHTML += `<p>⏱️ Tiempo total: ${((tiemposPorFase[0] + tiemposPorFase[1] + tiemposPorFase[2]) / 1000).toFixed(2)} segundos</p>`;
             recomendacionesHTML += '</div>';
             
             recomendacionesHTML += '<div style="margin: 15px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">';
-            
-            if (porcentaje >= 90) {
-                recomendacionesHTML += '<p><strong style="color: #FFD700; font-size: 18px;">🏛️ Nivel: Arquitecto Experto</strong></p>';
-                recomendacionesHTML += '<p>¡Excelente! Has demostrado dominio completo de vistas 2D y 3D en diversos objetos arquitectónicos.</p>';
-            } else if (porcentaje >= 70) {
-                recomendacionesHTML += '<p><strong style="color: #4CAF50; font-size: 18px;">📐 Nivel: Diseñador Competente</strong></p>';
-                recomendacionesHTML += '<p>Buen trabajo comprendiendo las relaciones espaciales en diferentes estructuras arquitectónicas.</p>';
-            } else if (porcentaje >= 50) {
-                recomendacionesHTML += '<p><strong style="color: #FF9800; font-size: 18px;">📏 Nivel: Aprendiz en Desarrollo</strong></p>';
-                recomendacionesHTML += '<p>Tienes una base sólida. Continúa practicando con diferentes tipos de objetos arquitectónicos.</p>';
-            } else {
-                recomendacionesHTML += '<p><strong style="color: #FF5252; font-size: 18px;">🎓 Nivel: Estudiante Principiante</strong></p>';
-                recomendacionesHTML += '<p>Revisa los conceptos básicos y practica con objetos más simples antes de continuar.</p>';
-            }
-            
+            recomendacionesHTML += `<p><strong style="color: #00BCD4;">Nivel alcanzado:</strong> ${nivel}</p>`;
+            recomendacionesHTML += `<p><strong style="color: #00BCD4;">Puntaje:</strong> ${puntaje}/${puntajeMaximo} (${porcentaje.toFixed(1)}%)</p>`;
             recomendacionesHTML += '</div>';
             
-            recomendacionesHTML += '<h4 style="color: #00BCD4; margin-top: 20px; margin-bottom: 10px;">📋 Análisis por objeto:</h4>';
-            recomendacionesHTML += '<div style="margin-left: 10px;">';
-            
-            const fasesUnicas = [];
-            const respuestasFiltradas = [];
-            
-            respuestasUsuario.forEach(respuesta => {
-                if (!fasesUnicas.includes(respuesta.fase)) {
-                    fasesUnicas.push(respuesta.fase);
-                    respuestasFiltradas.push(respuesta);
-                }
-            });
-            
-            respuestasFiltradas.forEach(respuesta => {
-                const objInfo = objetosArquitectonicos.find(o => o.nombre === respuesta.objeto);
-                recomendacionesHTML += `<div class="recomendacion-item">`;
-                recomendacionesHTML += `<strong>${respuesta.objeto} (Fase ${respuesta.fase}):</strong> ${respuesta.retroalimentacion}`;
-                if (objInfo && respuesta.puntos > 0) {
-                    recomendacionesHTML += ` <span style="color: #FFD700; font-size: 0.9em;">(+${respuesta.puntos}p)</span>`;
-                }
-                recomendacionesHTML += `</div>`;
-            });
-            
+            recomendacionesHTML += '<div style="margin: 15px 0; padding: 20px; background: rgba(0, 188, 212, 0.1); border-radius: 10px; border-left: 5px solid #00BCD4;">';
+            recomendacionesHTML += `<p style="white-space: pre-line; line-height: 1.8;">🎓 <strong>Recomendaciones de tu tutor IA:</strong><br><br>${mensajeIA}</p>`;
             recomendacionesHTML += '</div>';
-            
-            recomendacionesHTML += '<h4 style="color: #00BCD4; margin-top: 20px; margin-bottom: 10px;">💡 Para convertirte en un verdadero Arquitecto de Vistas:</h4>';
-            recomendacionesHTML += '<div style="margin-left: 10px;">';
-            
-            if (porcentaje < 70) {
-                recomendacionesHTML += '<div class="recomendacion-item">Estudia planos arquitectónicos reales para entender mejor las representaciones 2D</div>';
-                recomendacionesHTML += '<div class="recomendacion-item">Analiza edificios reales identificando sus vistas principales</div>';
-                recomendacionesHTML += '<div class="recomendacion-item">Practica dibujando vistas de objetos arquitectónicos complejos</div>';
-            }
-            
-            recomendacionesHTML += '<div class="recomendacion-item">Intenta visualizar cómo se verían otros objetos arquitectónicos desde diferentes ángulos</div>';
-            recomendacionesHTML += '<div class="recomendacion-item">Usa el modo VR para una comprensión espacial más profunda</div>';
-            recomendacionesHTML += '<div class="recomendacion-item">Compara planos 2D con fotografías de edificios reales</div>';
-            
-            recomendacionesHTML += '</div>';
-            
-            const frases = [
-                "Como dijo Louis Kahn: 'Un edificio bien diseñado es una obra de arte en tres dimensiones'",
-                "Recuerda: La grandeza de la arquitectura está en la conexión entre concepto y forma",
-                "Cada objeto arquitectónico cuenta una historia a través de sus vistas y proporciones",
-                "La verdadera maestría en arquitectura comienza con la comprensión espacial"
-            ];
-            
-            const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
-            recomendacionesHTML += `<div style="margin-top: 20px; padding: 15px; background: rgba(0, 188, 212, 0.1); border-radius: 10px; text-align: center; font-style: italic;">
-                <div style="color: #00BCD4; margin-bottom: 5px;">🏛️ Sabiduría Arquitectónica</div>
-                "${fraseAleatoria}"
-            </div>`;
             
             contenedor.innerHTML = recomendacionesHTML;
         }
+
+        // ============================================
+        // EXPORTAR FUNCIONES AL ÁMBITO GLOBAL
+        // ============================================
+        window.mostrarConceptualizacion = mostrarConceptualizacion;
+        window.volverInicio = volverInicio;
+        window.comenzarActividad = comenzarActividad;
+        window.reiniciar = reiniciar;
+        window.validarVistaFrontal = validarVistaFrontal;
+
+        // Precargar QR
+        setTimeout(() => {
+            const canvas = document.getElementById('qr-canvas');
+            if (canvas) {
+                QRCode.toCanvas(canvas, 'ARQUITECTO', { width: 200, margin: 2 }, (error) => {
+                    if (error) console.error('Error precargando QR:', error);
+                });
+            }
+        }, 1000);
+
+        enviarLog('Página cargada');
     </script>
 </body>
 </html>
